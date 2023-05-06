@@ -41,8 +41,8 @@
         "dejwcake/admin-translations": "dev-main",
         "dejwcake/admin-ui": "dev-main",
         "dejwcake/advanced-logger": "dev-main",
-        "dejwcake/media": "dev-main",
-        "dejwcake/translatable": "dev-main",
+        "dejwcake/craftable-media": "dev-main",
+        "dejwcake/craftable-translatable": "dev-main",
         "illuminate/support": "^9.0",
         "laravel/legacy-factories": "^1.1",
         "spatie/laravel-permission": "^3.0|^4.0|^5.0",
@@ -55,14 +55,45 @@
             "Brackets\\Craftable\\": "src/"
         }
     },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/dejwCake/advanced-logger.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/dejwCake/admin-generator.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/dejwCake/admin-auth.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/dejwCake/admin-listing.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/dejwCake/admin-translations.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/dejwCake/admin-ui.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/dejwCake/craftable-media.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/dejwCake/craftable-translatable.git"
+        }
+    ],
     "extra": {
         "laravel": {
             "providers": [
                 "Brackets\\Craftable\\CraftableServiceProvider"
             ]
-        },
-        "branch-alias": {
-            "dev-master": "8.0-dev"
         }
     }
 }
