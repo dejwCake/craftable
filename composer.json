@@ -49,40 +49,6 @@
         "spatie/laravel-backup": "^8.0",
         "spatie/laravel-permission": "^5.0"
     },
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/dejwCake/advanced-logger.git"
-        },
-        {
-            "type": "git",
-            "url": "https://github.com/dejwCake/admin-generator.git"
-        },
-        {
-            "type": "git",
-            "url": "https://github.com/dejwCake/admin-auth.git"
-        },
-        {
-            "type": "git",
-            "url": "https://github.com/dejwCake/admin-listing.git"
-        },
-        {
-            "type": "git",
-            "url": "https://github.com/dejwCake/admin-translations.git"
-        },
-        {
-            "type": "git",
-            "url": "https://github.com/dejwCake/admin-ui.git"
-        },
-        {
-            "type": "git",
-            "url": "https://github.com/dejwCake/craftable-media.git"
-        },
-        {
-            "type": "git",
-            "url": "https://github.com/dejwCake/craftable-translatable.git"
-        }
-    ],
     "autoload": {
         "psr-4": {
             "Brackets\\Craftable\\": "src/"
