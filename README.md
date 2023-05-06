@@ -134,6 +134,21 @@ After authorization you should be able to see a default homepage and two menu it
 
 You can find full documentation of this package and other our packages Craftable uses at https://docs.getcraftable.com/#/craftable.
 
+## Run tests ##
+
+To run tests use this docker environment.
+
+```shell
+  docker-compose run -it test vendor/bin/phpunit
+```
+
+To switch between postgresql and mariadb change in `docker-compose.yml` DB_CONNECTION environmental variable:
+
+```git
+- DB_CONNECTION: pgsql
++ DB_CONNECTION: mysql
+```
+
 ## Where to go next? ##
 
 At this point you are ready to start building your administration area. You probably want to start building a typical CRUD interface for your eloquent models. You should definitely check our [Admin Generator](https://getcraftable.com/docs/5.0/explore-generator) documentation.
