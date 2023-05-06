@@ -217,7 +217,7 @@ class CraftableInstall extends Command
         $this->call('admin-translations:scan-and-save', [
             'paths' => array_merge(
                 config('admin-translations.scanned_directories'),
-                ['vendor/brackets/admin-auth/src', 'vendor/brackets/admin-auth/resources']
+                ['vendor/dejwcake/admin-auth/src', 'vendor/dejwcake/admin-auth/resources']
             ),
         ]);
     }
