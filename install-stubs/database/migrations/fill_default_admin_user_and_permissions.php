@@ -28,7 +28,7 @@ return new class extends Migration
     /** @var array<array<string, string|CarbonInterface|Collection<string>>> */
     protected array $roles;
 
-    /** @var array<array<string, string|CarbonInterface|bool|Collection<string>|array>> */
+    /** @var array<array<string, array<string, string>|bool|CarbonInterface|Collection<string>|string|null>> */
     protected array $users;
 
     protected string $password = 'best package ever';

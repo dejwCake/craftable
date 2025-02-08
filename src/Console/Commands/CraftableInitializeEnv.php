@@ -99,8 +99,8 @@ class CraftableInitializeEnv extends Command
 
     private function updateDbConnection(): void
     {
-        $connection = $this->choice('What database driver do you use?', ['mysql', 'pgsql'], 0);
-        if ($connection !== null && $connection !== '') {
+        $connection = $this->choice('What database driver do you use?', ['mysql', 'pgsql'], 'mysql');
+        if ($connection !== '') {
             $this->updateEnv('DB_CONNECTION', $connection);
         }
     }

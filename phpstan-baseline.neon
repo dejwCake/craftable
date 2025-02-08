@@ -1,7 +1,44 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Out of 17 possible param types, only 15 \\- 88\\.2 %% actually have it\\. Add more param types to get over 99 %%$#"
-			count: 2
+			message: '#^Parameter \#1 \$permissions of method Illuminate\\Database\\Migrations\\Migration@anonymous/install\-stubs/database/migrations/fill_default_admin_user_and_permissions\.php\:14\:\:upUserPermissions\(\) expects array\<array\<string, Carbon\\CarbonInterface\|string\>\>, array\<string, string\>\|bool\|Carbon\\CarbonInterface\|\(Illuminate\\Support\\Collection&iterable\<string\>\)\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
 			path: install-stubs/database/migrations/fill_default_admin_user_and_permissions.php
+
+		-
+			message: '#^Parameter \#1 \$roles of method Illuminate\\Database\\Migrations\\Migration@anonymous/install\-stubs/database/migrations/fill_default_admin_user_and_permissions\.php\:14\:\:upUserRoles\(\) expects array\<array\<string, Carbon\\CarbonInterface\|\(Illuminate\\Support\\Collection&iterable\<string\>\)\|string\>\>, array\<string, string\>\|bool\|Carbon\\CarbonInterface\|\(Illuminate\\Support\\Collection&iterable\<string\>\)\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: install-stubs/database/migrations/fill_default_admin_user_and_permissions.php
+
+		-
+			message: '#^Property Illuminate\\Database\\Migrations\\Migration@anonymous/install\-stubs/database/migrations/fill_default_admin_user_and_permissions\.php\:14\:\:\$users \(array\<array\<string, array\<string, string\>\|bool\|Carbon\\CarbonInterface\|\(Illuminate\\Support\\Collection&iterable\<string\>\)\|string\|null\>\>\) does not accept array\<int, array\<string, Carbon\\CarbonImmutable\|list\<array\<string, string\>\>\|string\|true\|null\>\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: install-stubs/database/migrations/fill_default_admin_user_and_permissions.php
+
+		-
+			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
+			identifier: larastan.noEnvCallsOutsideOfConfig
+			count: 6
+			path: src/Console/Commands/CraftableInitializeEnv.php
+
+		-
+			message: '#^Trait Brackets\\Craftable\\Traits\\CreatedByAdminUserTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Traits/CreatedByAdminUserTrait.php
+
+		-
+			message: '#^Trait Brackets\\Craftable\\Traits\\PublishableTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Traits/PublishableTrait.php
+
+		-
+			message: '#^Trait Brackets\\Craftable\\Traits\\UpdatedByAdminUserTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Traits/UpdatedByAdminUserTrait.php
 

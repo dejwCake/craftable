@@ -43,13 +43,13 @@
         "dejwcake/advanced-logger": "1.x-dev",
         "dejwcake/craftable-media": "1.x-dev",
         "dejwcake/craftable-translatable": "1.x-dev",
-        "illuminate/support": "^11.37",
+        "illuminate/support": "^11.41",
         "maatwebsite/excel": "^3.1",
         "spatie/laravel-backup": "^9.2",
         "spatie/laravel-permission": "^6.13"
     },
     "require-dev": {
-        "larastan/larastan": "^2.9",
+        "larastan/larastan": "^3.0",
         "orchestra/testbench": "^9.9",
         "phpunit/phpunit": "^11.5"
     },
