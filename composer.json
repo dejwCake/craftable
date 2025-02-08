@@ -48,6 +48,9 @@
         "spatie/laravel-backup": "^9.2",
         "spatie/laravel-permission": "^6.13"
     },
+    "require-dev": {
+        "larastan/larastan": "^2.9"
+    },
     "autoload": {
         "psr-4": {
             "Brackets\\Craftable\\": "src/"
@@ -63,8 +66,5 @@
     },
     "branch-alias": {
         "dev-main": "1.0-dev"
-    },
-    "require-dev": {
-        "larastan/larastan": "^2.9"
     }
 }
