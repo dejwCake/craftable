@@ -3,7 +3,7 @@
 namespace Brackets\Craftable\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\File;
+use Illuminate\Filesystem\Filesystem;
 
 class CraftableInitializeEnv extends Command
 {
@@ -11,6 +11,7 @@ class CraftableInitializeEnv extends Command
      * The name and signature of the console command.
      *
      * @var string
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
      */
     protected $signature = 'craftable:init-env';
 
@@ -18,8 +19,14 @@ class CraftableInitializeEnv extends Command
      * The console command description.
      *
      * @var string
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
      */
     protected $description = 'Initialize database environment variables';
+
+    public function __construct(private readonly Filesystem $filesystem)
+    {
+        parent::__construct();
+    }
 
     /**
      * Execute the console command.
@@ -39,24 +46,17 @@ class CraftableInitializeEnv extends Command
 
     /**
      * Update .env setting
-     *
-     * @param string $key
-     * @param string $value
-     * @param string $fileName 
-     * @return int|bool
      */
-    private function updateEnv($key, $value, $fileName = '.env')
+    private function updateEnv(string $key, string $value, string $fileName = '.env'): bool|int
     {
         $fileName = base_path($fileName);
-        $content = File::get($fileName);
-        return File::put($fileName, preg_replace('/' . $key . '=.*/', $key . '=' . $value, $content));
+        $content = $this->filesystem->get($fileName);
+        return $this->filesystem->put($fileName, preg_replace('/' . $key . '=.*/', $key . '=' . $value, $content));
     }
 
     /**
      * If default database values in .env are present and interaction mode is on,
      * asks for database settings. Values not provided will not be overwritten.
-     *
-     * @return void
      */
     private function getDbSettings(): void
     {
@@ -81,7 +81,7 @@ class CraftableInitializeEnv extends Command
             }
 
             $dbDatabase = $this->anticipate('What is your database name?', 
-                ['laravel', 'homestead'],
+                ['laravel'],
                 'laravel'
             );
             if (!empty($dbDatabase)) {
@@ -89,7 +89,7 @@ class CraftableInitializeEnv extends Command
             }
 
             $dbUsername = $this->anticipate('What is your database user name?',
-                ['root', 'homestead'], 
+                ['root'],
                 'root'
             );
             if (!empty($dbUsername)) {
@@ -105,8 +105,6 @@ class CraftableInitializeEnv extends Command
 
     /**
      * Change default application name from Laravel to Craftable
-     *
-     * @return void
      */
     private function setApplicationName(): void
     {
@@ -118,8 +116,6 @@ class CraftableInitializeEnv extends Command
 
     /**
      * Determines if the .env file has default database settings
-     * 
-     * @return boolean
      */
     private function isDefaultDatabaseEnv(): bool
     {

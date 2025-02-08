@@ -1,59 +1,58 @@
 <?php
 
-use Brackets\AdminAuth\Models\AdminUser;
-use Carbon\Carbon;
-use Illuminate\Config\Repository;
+use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
+use Illuminate\Contracts\Config\Repository as Config;
+use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Hashing\HashManager;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 
 return new class extends Migration
 {
+    protected Config $config;
+    protected Cache $cache;
+    protected string $guardName;
     /**
-     * @var Repository|mixed
+     * @var class-string
      */
-    protected $guardName;
-    /**
-     * @var mixed
-     */
-    protected $userClassName;
-    /**
-     * @var
-     */
-    protected $userTable;
+    protected string $userClassName;
+    protected string $userTable;
 
     /**
-     * @var array
+     * @var array<array<string, string|CarbonInterface>>
      */
-    protected $permissions;
+    protected array $permissions;
     /**
-     * @var array
+     * @var array<array<string, string|CarbonInterface|Collection<string>>>
      */
-    protected $roles;
+    protected array $roles;
     /**
-     * @var array
+     * @var array<array<string, string|CarbonInterface|bool|Collection<string>|array>>
      */
-    protected $users;
+    protected array $users;
 
-    /**
-     * @var string
-     */
-    protected $password = 'best package ever';
+    protected string $password = 'best package ever';
 
-    /**
-     * FillDefaultAdminUserAndPermissions constructor.
-     */
     public function __construct()
     {
-        $this->guardName = config('admin-auth.defaults.guard');
-        $providerName = config('auth.guards.' . $this->guardName . '.provider');
-        $provider = config('auth.providers.' . $providerName);
-        if ($provider['driver'] === 'eloquent') {
-            $this->userClassName = $provider['model'];
+        $this->config = app(Config::class);
+        $this->cache = app(Cache::class);
+        $hashManager = app(HashManager::class);
+        $this->guardName = $this->config->get('admin-auth.defaults.guard');
+        $providerName = $this->config->get('auth.guards.' . $this->guardName . '.provider');
+        $provider = $this->config->get('auth.providers.' . $providerName);
+        if ($provider['driver'] !== 'eloquent') {
+            throw new RuntimeException('Only Eloquent user provider is supported');
         }
+        if ($provider['model'] === null) {
+            throw new RuntimeException('Admin user model not defined');
+        }
+        $this->userClassName = $provider['model'];
         $this->userTable = (new $this->userClassName)->getTable();
 
-        $defaultPermissions = collect([
+        $defaultPermissions = new Collection([
             // view admin as a whole
             'admin',
 
@@ -80,8 +79,8 @@ return new class extends Migration
             return [
                 'name' => $permission,
                 'guard_name' => $this->guardName,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
+                'created_at' => CarbonImmutable::now(),
+                'updated_at' => CarbonImmutable::now(),
             ];
         })->toArray();
 
@@ -90,8 +89,8 @@ return new class extends Migration
             [
                 'name' => 'Administrator',
                 'guard_name' => $this->guardName,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
+                'created_at' => CarbonImmutable::now(),
+                'updated_at' => CarbonImmutable::now(),
                 'permissions' => $defaultPermissions->reject(function ($permission) {
                     return $permission === 'admin.admin-user.impersonal-login';
                 }),
@@ -103,11 +102,11 @@ return new class extends Migration
             [
                 'first_name' => 'Administrator',
                 'last_name' => 'Administrator',
-                'email' => 'administrator@brackets.sk',
-                'password' => Hash::make($this->password),
+                'email' => 'admin@getcraftable.com',
+                'password' => $hashManager->make($this->password),
                 'remember_token' => null,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
+                'created_at' => CarbonImmutable::now(),
+                'updated_at' => CarbonImmutable::now(),
                 'activated' => true,
                 'roles' => [
                     [
@@ -126,13 +125,9 @@ return new class extends Migration
      * Run the migrations.
      *
      * @throws Exception
-     * @return void
      */
     public function up(): void
     {
-        if ($this->userClassName === null) {
-            throw new RuntimeException('Admin user model not defined');
-        }
         DB::transaction(function () {
             foreach ($this->permissions as $permission) {
                 $permissionItem = DB::table('permissions')->where([
@@ -169,7 +164,8 @@ return new class extends Migration
                         'permission_id' => $permissionItem->id,
                         'role_id' => $roleId
                     ];
-                    $roleHasPermissionItem = DB::table('role_has_permissions')->where($roleHasPermissionData)->first();
+                    $roleHasPermissionItem = DB::table('role_has_permissions')
+                        ->where($roleHasPermissionData)->first();
                     if ($roleHasPermissionItem === null) {
                         DB::table('role_has_permissions')->insert($roleHasPermissionData);
                     }
@@ -190,9 +186,13 @@ return new class extends Migration
                 if ($userItem === null) {
                     $userId = DB::table($this->userTable)->insertGetId($user);
 
-                    AdminUser::find($userId)->addMedia(storage_path() . '/images/avatar.png')
-                        ->preservingOriginal()
-                        ->toMediaCollection('avatar', 'media');
+                    try {
+                        $this->userClassName::find($userId)->addMedia(storage_path() . '/images/avatar.png')
+                            ->preservingOriginal()
+                            ->toMediaCollection('avatar', 'media');
+                    } catch (Throwable) {
+                        // do nothing
+                    }
 
                     foreach ($roles as $role) {
                         $roleItem = DB::table('roles')->where([
@@ -230,25 +230,25 @@ return new class extends Migration
                 }
             }
         });
-        app()['cache']->forget(config('permission.cache.key'));
+        $this->cache->forget($this->config->get('permission.cache.key'));
     }
 
     /**
      * Reverse the migrations.
      *
      * @throws Exception
-     * @return void
      */
     public function down(): void
     {
-        if ($this->userClassName === null) {
-            throw new RuntimeException('Admin user model not defined');
-        }
         DB::transaction(function () {
             foreach ($this->users as $user) {
                 $userItem = DB::table($this->userTable)->where('email', $user['email'])->first();
                 if ($userItem !== null) {
-                    AdminUser::find($userItem->id)->media()->delete();
+                    try {
+                        $this->userClassName::find($userItem->id)->media()->delete();
+                    } catch (Throwable) {
+                        // do nothing
+                    }
                     DB::table($this->userTable)->where('id', $userItem->id)->delete();
                     DB::table('model_has_permissions')->where([
                         'model_id' => $userItem->id,
@@ -283,6 +283,6 @@ return new class extends Migration
                 }
             }
         });
-        app()['cache']->forget(config('permission.cache.key'));
+        $this->cache->forget($this->config->get('permission.cache.key'));
     }
 };

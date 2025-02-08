@@ -1,9 +1,3 @@
-# 🔥 BIG NEWS 🔥
-
-We have just released [Craftable PRO](https://craftable.pro) - the premium version of this popular open-source laravel admin panel builder. Pro version comes with fresh UI built on top of Tailwind, it uses latest Laravel and InertiaJS and ships with lot of [new features](https://craftable.pro/#features).
-
----
-
 # Craftable - build admin panels with Laravel #
 
 - [About](#about)
@@ -19,7 +13,9 @@ We have just released [Craftable PRO](https://craftable.pro) - the premium versi
 
 ## About ##
 
-Hi Crafter, welcome to the official documentation for Craftable 6 - a Laravel-based open-source toolkit for building administration interfaces. It's an administration area minimalistic template. A starting point for developing back-office systems, intranets or a CMS systems.
+Hi Crafter, welcome to the official documentation for Craftable - a Laravel-based open-source toolkit for building administration interfaces. It's an administration area minimalistic template. A starting point for developing back-office systems, intranets or a CMS systems.
+
+This package is forked from BRACKETS-by-TRIAD/craftable and continuously maintained.
 
 ![Craftable administration area example](https://www.getcraftable.com/docs/5.0/images/posts-crud.png "Craftable administration area example")
 
@@ -60,15 +56,15 @@ Craftable uses all the packages above. It also uses some other 3rd party package
 ## Requirements ##
 
 Craftable requires:
-- PHP 7.4+
+- PHP 8.2+
 - Supported databases:
-  - MySQL 5.7+
-  - PostgreSQL 9.5+
+  - MariaDb 11.6+
+  - PostgreSQL 17+
 - npm 5.3+
 - node 8.4+
 
-Craftable uses Laravel so you should check out its requirements too. It is compatible with Laravel 8:
-- https://laravel.com/docs/8.x/installation#server-requirements
+Craftable uses Laravel so you should check out its requirements too. It is compatible with Laravel 11:
+- https://laravel.com/docs/11.x/installation#server-requirements
 
 ## Installation ##
 
@@ -86,12 +82,9 @@ Now you can create a new Craftable project:
 craftable new my_project
 ```
 
-This will install Craftable using latest Laravel version (currently 6). If you prefer tu use latest LTS Laravel version (currently also 6), use `--lts` flag:
-```bash
-craftable new --lts my_project
-```
+This will install Craftable using latest Laravel version (currently 11):
 
-The commands is going to ask for a database settings and then it will setup everything (install all dependencies, publish all important vendor configs, migrate, setup some configs, webpack config and run migrations).
+The command is going to ask for a database settings and then it will setup everything (install all dependencies, publish all important vendor configs, migrate, setup some configs, webpack config and run migrations).
 
 
 Command is going to generate and **print the password for the default administrator** account. Save this password to your clipboard, we are going to need it soon.
@@ -101,8 +94,8 @@ Command is going to generate and **print the password for the default administra
 Or alternatively, you can use your existing Laravel application. Start with requiring these two main packages:
 
 ```bash
-composer require brackets/craftable
-composer require --dev brackets/admin-generator
+composer require dejwcake/craftable
+composer require --dev dejwcake/admin-generator
 ```
 
 To install this package use:
@@ -139,7 +132,7 @@ You can find full documentation of this package and other our packages Craftable
 To run tests use this docker environment.
 
 ```shell
-  docker-compose run -it test vendor/bin/phpunit
+  docker compose run -it --rm test vendor/bin/phpunit -d pcov.enabled=1
 ```
 
 To switch between postgresql and mariadb change in `docker-compose.yml` DB_CONNECTION environmental variable:
@@ -147,6 +140,41 @@ To switch between postgresql and mariadb change in `docker-compose.yml` DB_CONNE
 ```git
 - DB_CONNECTION: pgsql
 + DB_CONNECTION: mysql
+```
+
+## Run code analysis tools
+
+To be sure, that your code is clean, you can run code analysis tools. To do this, run:
+
+For composer normalization:
+```shell
+  docker compose run -it --rm php-qa composer normalize
+```
+
+For php compatibility:
+```shell
+  docker compose run -it --rm php-qa phpcs --standard=.phpcs.compatibility.xml --cache=.phpcs.cache
+```
+
+For code style:
+```shell
+  docker compose run -it --rm php-qa phpcs -s --colors --extensions=php
+```
+
+or to fix issues:
+
+```shell
+  docker compose run -it --rm php-qa phpcbf -s --colors --extensions=php
+```
+
+For static analysis:
+```shell
+  docker compose run -it --rm php-qa phpstan analyse --configuration=phpstan.neon
+```
+
+For mess detector:
+```shell
+  docker compose run -it --rm php-qa phpmd ./src,./install-stubs,./resources,./routes,./tests ansi phpmd.xml --suffixes php --baseline-file phpmd.baseline.xml
 ```
 
 ## Where to go next? ##
@@ -163,7 +191,7 @@ Have fun & craft something awesome!
 
 - Before Contribute Please read [CONTRIBUTING.md](https://github.com/BRACKETS-by-TRIAD/craftable/blob/master/CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](https://github.com/BRACKETS-by-TRIAD/craftable/blob/master/CODE_OF_CONDUCT.md).
 
-- Create an issue of the project or a feature you would like to add in the project and get the task assigned for youself.(Issue can be any bug fixes or any feature you want to add in this project).
+- Create an issue of the project or a feature you would like to add in the project and get the task assigned for yourself.(Issue can be any bug fixes or any feature you want to add in this project).
 
 - Fork the repo to your Github.<br/>
 

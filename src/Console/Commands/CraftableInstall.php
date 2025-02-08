@@ -4,7 +4,6 @@ namespace Brackets\Craftable\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 class CraftableInstall extends Command
@@ -13,6 +12,7 @@ class CraftableInstall extends Command
      * The name and signature of the console command.
      *
      * @var string
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
      */
     protected $signature = 'craftable:install';
 
@@ -20,23 +20,23 @@ class CraftableInstall extends Command
      * The console command description.
      *
      * @var string
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
      */
     protected $description = 'Install a Craftable (brackets/craftable) instance';
 
-    /**
-     * Password for generated default admin
-     *
-     * @var string
-     */
-    protected $password = '';
+    protected string $password = '';
+
+    public function __construct(private readonly Filesystem $filesystem)
+    {
+        parent::__construct();
+    }
 
     /**
      * Execute the console command.
      *
-     * @param Filesystem $files
      * @return void
      */
-    public function handle(Filesystem $files): void
+    public function handle(): void
     {
         $this->info('Installing Craftable...');
 
@@ -48,7 +48,7 @@ class CraftableInstall extends Command
 
         $this->call('admin-auth:install', ['--dont-install-admin-ui' => true]);
 
-        $this->generateUserStuff($files);
+        $this->generateUserStuff();
 
         $this->call('admin-translations:install', ['--dont-install-admin-ui' => true]);
 
@@ -69,12 +69,12 @@ class CraftableInstall extends Command
         string $replaceWith,
         ?string $ifRegexNotExists = null
     ): bool|int {
-        $content = File::get($filePath);
+        $content = $this->filesystem->get($filePath);
         if ($ifRegexNotExists !== null && preg_match($ifRegexNotExists, $content)) {
             return false;
         }
 
-        return File::put($filePath, str_replace($find, $replaceWith, $content));
+        return $this->filesystem->put($filePath, str_replace($find, $replaceWith, $content));
     }
 
     /**
@@ -113,10 +113,10 @@ class CraftableInstall extends Command
         $this->publishCraftable();
     }
 
-    private function publishCraftable()
+    private function publishCraftable(): void
     {
         $alreadyMigrated = false;
-        $files = File::allFiles(database_path('migrations'));
+        $files = $this->filesystem->allFiles(database_path('migrations'));
         foreach ($files as $file) {
             if (strpos($file->getFilename(), 'fill_default_admin_user_and_permissions.php') !== false) {
                 $alreadyMigrated = true;
@@ -132,10 +132,10 @@ class CraftableInstall extends Command
         }
     }
 
-    private function publishSpatieMediaLibrary()
+    private function publishSpatieMediaLibrary(): void
     {
         $alreadyMigrated = false;
-        $files = File::allFiles(database_path('migrations'));
+        $files = $this->filesystem->allFiles(database_path('migrations'));
         foreach ($files as $file) {
             if (strpos($file->getFilename(), 'create_media_table.php') !== false) {
                 $alreadyMigrated = true;
@@ -151,15 +151,13 @@ class CraftableInstall extends Command
     }
 
     /**
-     * Generate new password and change default password in igration to use new password
-     *
-     * @return void
+     * Generate new password and change default password in migration to use new password
      */
     private function generatePasswordAndUpdateMigration(): void
     {
         $this->password = Str::random(10);
 
-        $files = File::allFiles(database_path('migrations'));
+        $files = $this->filesystem->allFiles(database_path('migrations'));
         foreach ($files as $file) {
             if (strpos($file->getFilename(), 'fill_default_admin_user_and_permissions.php') !== false) {
                 //change database/migrations/*fill_default_user_and_permissions.php to use new password
@@ -175,11 +173,8 @@ class CraftableInstall extends Command
 
     /**
      * Generate user administration and profile
-     *
-     * @param Filesystem $files
-     * @return void
      */
-    private function generateUserStuff(Filesystem $files): void
+    private function generateUserStuff(): void
     {
         // TODO this is probably redundant?
         // Migrate
@@ -196,8 +191,6 @@ class CraftableInstall extends Command
 
     /**
      * Prepare translations config and rescan
-     *
-     * @return void
      */
     private function scanAndSaveTranslations(): void
     {
@@ -225,8 +218,6 @@ class CraftableInstall extends Command
 
     /**
      * Change logging to add hash to logs
-     *
-     * @return void
      */
     private function addHashToLogging(): void
     {

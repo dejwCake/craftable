@@ -9,11 +9,6 @@ use Illuminate\Support\ServiceProvider;
 
 class CraftableServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
     public function boot(): void
     {
         $this->commands([
@@ -39,11 +34,6 @@ class CraftableServiceProvider extends ServiceProvider
         }
     }
 
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
     public function register()
     {
     }

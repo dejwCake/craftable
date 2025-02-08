@@ -2,8 +2,9 @@
 
 namespace Brackets\Craftable\Console\Commands;
 
+use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\DatabaseManager;
 
 class CraftableTestDBConnection extends Command
 {
@@ -11,6 +12,7 @@ class CraftableTestDBConnection extends Command
      * The name and signature of the console command.
      *
      * @var string
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
      */
     protected $signature = 'craftable:test-db-connection';
 
@@ -18,26 +20,27 @@ class CraftableTestDBConnection extends Command
      * The console command description.
      *
      * @var string
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
      */
     protected $description = 'Test the database connection';
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle(): int
+    public function handle(DatabaseManager $db): int
     {
         $this->info('Testing the database connection...');
 
         try {
-            DB::connection()->getPdo();
-        } catch (\Exception $e) {
-            $this->error("Could not connect to the database.  Please check your configuration. Error: " . $e->getMessage());
-            return 1;
+            $db->connection()->getPdo();
+        } catch (Exception $e) {
+            $this->error("Could not connect to the database. Please check your configuration. Error: " . $e->getMessage());
+
+            return self::FAILURE;
         }
 
         $this->info('...connection OK');
-        return 0;
+
+        return self::SUCCESS;
     }
 }

@@ -2,33 +2,49 @@
 
 namespace Brackets\Craftable\Traits;
 
-use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 trait PublishableTrait
 {
-    /**
-     * @return bool
-     */
+    private function hasPublishedAt(): bool
+    {
+        if ($this instanceof Model) {
+            return $this->hasAttribute('published_at')
+                || in_array('published_at', $this->dates, true)
+                || in_array('published_at', $this->casts, true);
+        }
+
+        return false;
+    }
+
     private function hasPublishedTo(): bool
     {
-        return in_array('published_to', $this->dates, true);
+        if ($this instanceof Model) {
+            return $this->hasAttribute('published_to')
+                || in_array('published_to', $this->dates, true)
+                || in_array('published_to', $this->casts, true);
+        }
+
+        return false;
     }
 
     /**
      * Scope a query to only include published models.
-     *
-     * @param Builder $query
-     * @return Builder
      */
     public function scopePublished(Builder $query): Builder
     {
         return $query
-            ->where('published_at', '<=', Carbon::now())
-            ->whereNotNull('published_at')
-            ->when($this->hasPublishedTo(), static function ($query) {
-                return $query->where(static function ($query2) {
-                    $query2->where('published_to', '>=', Carbon::now())
+            ->when($this->hasPublishedAt(), static function (Builder $query) {
+                return $query->where(static function (Builder $query) {
+                    $query->where('published_at', '<=', CarbonImmutable::now())
+                        ->whereNotNull('published_at');
+                });
+            })
+            ->when($this->hasPublishedTo(), static function ( Builder$query) {
+                return $query->where(static function (Builder $query) {
+                    $query->where('published_to', '>=', CarbonImmutable::now())
                         ->orWhereNull('published_to');
                 });
             });
@@ -36,55 +52,59 @@ trait PublishableTrait
 
     /**
      * Scope a query to only include unpublished models.
-     *
-     * @param Builder $query
-     * @return Builder
      */
     public function scopeUnpublished(Builder $query): Builder
     {
-        return $query->where('published_at', '>', Carbon::now())->orWhereNull('published_at')
-            ->when($this->hasPublishedTo(), static function ($query) {
-                $query->orWhere('published_to', '<', Carbon::now());
+        return $query
+            ->when($this->hasPublishedAt(), static function (Builder $query) {
+                $query->where('published_at', '>', CarbonImmutable::now())
+                    ->orWhereNull('published_at');
+            })
+            ->when($this->hasPublishedTo(), static function (Builder $query) {
+                $query->orWhere('published_to', '<', CarbonImmutable::now());
             });
     }
 
-    /**
-     * @return bool
-     */
     public function isPublished(): bool
     {
+        if (!$this->hasPublishedAt()) {
+            return true;
+        }
+
         if ($this->published_at === null) {
             return false;
         }
 
-        return $this->published_at->lte(Carbon::now()) && ($this->hasPublishedTo() ? ($this->published_to->gte(Carbon::now()) || $this->published_to === null) : true);
+        return $this->published_at->lte(CarbonImmutable::now())
+            && (
+                $this->hasPublishedTo()
+                ? ($this->published_to->gte(CarbonImmutable::now()) || $this->published_to === null)
+                : true
+            );
     }
 
-    /**
-     * @return bool
-     */
     public function isUnpublished(): bool
     {
         return !$this->isPublished();
     }
 
-    /**
-     * @return bool
-     */
     public function publish(): bool
     {
-        $data = ['published_at' => Carbon::now()->toDateTimeString()];
+        if (!$this->hasPublishedAt()) {
+            return true;
+        }
 
-        if ($this->hasPublishedTo() && $this->published_to->lte(Carbon::now())) {
+        $data = [
+            'published_at' => CarbonImmutable::now(),
+        ];
+
+        if ($this->hasPublishedTo() && $this->published_to->lte(CarbonImmutable::now())) {
             $data['published_to'] = null;
         }
 
         return $this->update($data);
     }
 
-    /**
-     * @return bool
-     */
     public function unpublish(): bool
     {
         return $this->update([
