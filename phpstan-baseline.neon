@@ -1,3 +1,7 @@
 parameters:
 	ignoreErrors:
+		-
+			message: "#^Out of 17 possible param types, only 15 \\- 88\\.2 %% actually have it\\. Add more param types to get over 99 %%$#"
+			count: 2
+			path: install-stubs/database/migrations/fill_default_admin_user_and_permissions.php
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brackets\Craftable;
 
 use Brackets\Craftable\Console\Commands\CraftableInitializeEnv;
@@ -22,7 +24,9 @@ class CraftableServiceProvider extends ServiceProvider
                 $timestamp = date('Y_m_d_His', time() + 5);
 
                 $this->publishes([
-                    __DIR__ . '/../install-stubs/database/migrations/fill_default_admin_user_and_permissions.php' => database_path('migrations') . '/' . $timestamp . '_fill_default_admin_user_and_permissions.php',
+                    __DIR__ . '/../install-stubs/database/migrations/fill_default_admin_user_and_permissions.php' =>
+                        database_path('migrations') . '/'
+                        . $timestamp . '_fill_default_admin_user_and_permissions.php',
                 ], 'migrations');
             }
 
@@ -34,7 +38,8 @@ class CraftableServiceProvider extends ServiceProvider
         }
     }
 
-    public function register()
+    public function register(): void
     {
+        //do nothing
     }
 }

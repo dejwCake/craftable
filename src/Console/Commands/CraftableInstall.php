@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brackets\Craftable\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -33,8 +35,6 @@ class CraftableInstall extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
     public function handle(): void
     {
@@ -67,7 +67,7 @@ class CraftableInstall extends Command
         string $filePath,
         string $find,
         string $replaceWith,
-        ?string $ifRegexNotExists = null
+        ?string $ifRegexNotExists = null,
     ): bool|int {
         $content = $this->filesystem->get($filePath);
         if ($ifRegexNotExists !== null && preg_match($ifRegexNotExists, $content)) {
@@ -79,19 +79,17 @@ class CraftableInstall extends Command
 
     /**
      * Publishing all publishable files from all craftable packages
-     *
-     * @return void
      */
     private function publishAllVendors(): void
     {
         //Spatie Permission
         $this->call('vendor:publish', [
             '--provider' => 'Spatie\\Permission\\PermissionServiceProvider',
-            '--tag' => 'permission-migrations'
+            '--tag' => 'permission-migrations',
         ]);
         $this->call('vendor:publish', [
             '--provider' => 'Spatie\\Permission\\PermissionServiceProvider',
-            '--tag' => 'config'
+            '--tag' => 'config',
         ]);
 
         //Spatie Backup
@@ -120,6 +118,7 @@ class CraftableInstall extends Command
         foreach ($files as $file) {
             if (strpos($file->getFilename(), 'fill_default_admin_user_and_permissions.php') !== false) {
                 $alreadyMigrated = true;
+
                 break;
             }
         }
@@ -139,13 +138,14 @@ class CraftableInstall extends Command
         foreach ($files as $file) {
             if (strpos($file->getFilename(), 'create_media_table.php') !== false) {
                 $alreadyMigrated = true;
+
                 break;
             }
         }
         if (!$alreadyMigrated) {
             $this->call('vendor:publish', [
                 '--provider' => 'Spatie\\MediaLibrary\\MediaLibraryServiceProvider',
-                '--tag' => 'migrations'
+                '--tag' => 'migrations',
             ]);
         }
     }
@@ -166,6 +166,7 @@ class CraftableInstall extends Command
                     'best package ever',
                     '' . $this->password . '',
                 );
+
                 break;
             }
         }
@@ -211,7 +212,7 @@ class CraftableInstall extends Command
         $this->call('admin-translations:scan-and-save', [
             'paths' => array_merge(
                 config('admin-translations.scanned_directories'),
-                ['vendor/dejwcake/admin-auth/src', 'vendor/dejwcake/admin-auth/resources']
+                ['vendor/dejwcake/admin-auth/src', 'vendor/dejwcake/admin-auth/resources'],
             ),
         ]);
     }
@@ -226,7 +227,7 @@ class CraftableInstall extends Command
                 config_path('logging.php'),
                 '\'days\' => 14,',
                 '\'days\' => 90,
-            \'tap\' => [Brackets\AdvancedLogger\LogCustomizers\HashLogCustomizer::class],'
+            \'tap\' => [Brackets\AdvancedLogger\LogCustomizers\HashLogCustomizer::class],',
             );
         }
     }

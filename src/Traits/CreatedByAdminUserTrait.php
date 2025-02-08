@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brackets\Craftable\Traits;
 
 use Brackets\AdminAuth\Models\AdminUser;

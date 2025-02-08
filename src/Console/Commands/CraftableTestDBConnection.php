@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brackets\Craftable\Console\Commands;
 
-use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Database\DatabaseManager;
 
@@ -33,8 +34,10 @@ class CraftableTestDBConnection extends Command
 
         try {
             $db->connection()->getPdo();
-        } catch (Exception $e) {
-            $this->error("Could not connect to the database. Please check your configuration. Error: " . $e->getMessage());
+        } catch (\Throwable $e) {
+            $this->error(
+                "Could not connect to the database. Please check your configuration. Error: " . $e->getMessage(),
+            );
 
             return self::FAILURE;
         }

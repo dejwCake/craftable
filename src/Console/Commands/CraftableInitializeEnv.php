@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brackets\Craftable\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -30,8 +32,6 @@ class CraftableInitializeEnv extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
     public function handle(): void
     {
@@ -51,6 +51,7 @@ class CraftableInitializeEnv extends Command
     {
         $fileName = base_path($fileName);
         $content = $this->filesystem->get($fileName);
+
         return $this->filesystem->put($fileName, preg_replace('/' . $key . '=.*/', $key . '=' . $value, $content));
     }
 
@@ -61,45 +62,12 @@ class CraftableInitializeEnv extends Command
     private function getDbSettings(): void
     {
         if ($this->isDefaultDatabaseEnv() && $this->input->isInteractive()) {
-            $dbConnection = $this->choice('What database driver do you use?', ['mysql', 'pgsql'], 0);
-            if (!empty($dbConnection)) {
-                $this->updateEnv('DB_CONNECTION', $dbConnection);
-            }
-
-            $dbHost = $this->anticipate('What is your database host?', ['localhost', '127.0.0.1'], '127.0.0.1');
-            if (!empty($dbHost)) {
-                $this->updateEnv('DB_HOST', $dbHost);
-            }
-
-            $dbPort = $this->anticipate(
-                'What is your database port?',
-                ['3306', '5432'],
-                env('DB_CONNECTION') === 'mysql' ? '3306' : '5432'
-            );
-            if (!empty($dbPort)) {
-                $this->updateEnv('DB_PORT', $dbPort);
-            }
-
-            $dbDatabase = $this->anticipate('What is your database name?', 
-                ['laravel'],
-                'laravel'
-            );
-            if (!empty($dbDatabase)) {
-                $this->updateEnv('DB_DATABASE', $dbDatabase);
-            }
-
-            $dbUsername = $this->anticipate('What is your database user name?',
-                ['root'],
-                'root'
-            );
-            if (!empty($dbUsername)) {
-                $this->updateEnv('DB_USERNAME', $dbUsername);
-            }
-
-            $dbPassword = $this->secret('What is your database user password?', 'secret');
-            if (!empty($dbPassword)) {
-                $this->updateEnv('DB_PASSWORD', $dbPassword);
-            }
+            $this->updateDbConnection();
+            $this->updateDbHost();
+            $this->updateDbPort();
+            $this->updateDbName();
+            $this->updateDbUser();
+            $this->updateDbPassword();
         }
     }
 
@@ -119,17 +87,73 @@ class CraftableInitializeEnv extends Command
      */
     private function isDefaultDatabaseEnv(): bool
     {
-        if ( 
-            version_compare(app()::VERSION, '5.8.35', '<') && 
-                (env('DB_DATABASE') === 'homestead' && 
+        return
+            version_compare(app()::VERSION, '5.8.35', '<') &&
+                (env('DB_DATABASE') === 'homestead' &&
                     env('DB_USERNAME') === 'homestead') ||
-            version_compare(app()::VERSION, '5.8.35', '>=') && 
-                (env('DB_DATABASE') === 'laravel' && 
-                    env('DB_USERNAME') === 'root') 
-        ) {
-            return true;
-        }
+            version_compare(app()::VERSION, '5.8.35', '>=') &&
+                (env('DB_DATABASE') === 'laravel' &&
+                    env('DB_USERNAME') === 'root')
+        ;
+    }
 
-        return false;
+    private function updateDbConnection(): void
+    {
+        $connection = $this->choice('What database driver do you use?', ['mysql', 'pgsql'], 0);
+        if ($connection !== null && $connection !== '') {
+            $this->updateEnv('DB_CONNECTION', $connection);
+        }
+    }
+
+    private function updateDbHost(): void
+    {
+        $host = $this->anticipate('What is your database host?', ['localhost', '127.0.0.1'], '127.0.0.1');
+        if ($host !== null && $host !== '') {
+            $this->updateEnv('DB_HOST', $host);
+        }
+    }
+
+    private function updateDbPort(): void
+    {
+        $port = $this->anticipate(
+            'What is your database port?',
+            ['3306', '5432'],
+            env('DB_CONNECTION') === 'mysql' ? '3306' : '5432',
+        );
+        if ($port !== null && $port !== '') {
+            $this->updateEnv('DB_PORT', $port);
+        }
+    }
+
+    private function updateDbName(): void
+    {
+        $name = $this->anticipate(
+            'What is your database name?',
+            ['laravel'],
+            'laravel',
+        );
+        if ($name !== null && $name !== '') {
+            $this->updateEnv('DB_DATABASE', $name);
+        }
+    }
+
+    private function updateDbUser(): void
+    {
+        $user = $this->anticipate(
+            'What is your database user name?',
+            ['root'],
+            'root',
+        );
+        if ($user !== null && $user !== '') {
+            $this->updateEnv('DB_USERNAME', $user);
+        }
+    }
+
+    private function updateDbPassword(): void
+    {
+        $password = $this->secret('What is your database user password?');
+        if ($password !== null && $password !== '') {
+            $this->updateEnv('DB_PASSWORD', $password);
+        }
     }
 }
