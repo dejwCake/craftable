@@ -63,18 +63,18 @@ class CraftableInstall extends Command
         $this->info('Craftable installed.');
     }
 
-    /**
-     * Replace string in file
-     *
-     * @param string $fileName
-     * @param string $find
-     * @param string $replaceWith
-     * @return int|bool
-     */
-    private function strReplaceInFile($fileName, $find, $replaceWith)
-    {
-        $content = File::get($fileName);
-        return File::put($fileName, str_replace($find, $replaceWith, $content));
+    private function strReplaceInFile(
+        string $filePath,
+        string $find,
+        string $replaceWith,
+        ?string $ifRegexNotExists = null
+    ): bool|int {
+        $content = File::get($filePath);
+        if ($ifRegexNotExists !== null && preg_match($ifRegexNotExists, $content)) {
+            return false;
+        }
+
+        return File::put($filePath, str_replace($find, $replaceWith, $content));
     }
 
     /**
@@ -166,7 +166,8 @@ class CraftableInstall extends Command
                 $this->strReplaceInFile(
                     database_path('migrations/' . $file->getFilename()),
                     'best package ever',
-                    '' . $this->password . '');
+                    '' . $this->password . '',
+                );
                 break;
             }
         }
@@ -211,7 +212,7 @@ class CraftableInstall extends Command
         base_path(\'vendor/dejwcake/admin-auth/src\'),
         base_path(\'vendor/dejwcake/admin-auth/resources\'),
         base_path(\'vendor/dejwcake/admin-ui/resources\'),
-        base_path(\'vendor/dejwcake/admin-translations/resources\'),'
+        base_path(\'vendor/dejwcake/admin-translations/resources\'),',
         );
 
         $this->call('admin-translations:scan-and-save', [
