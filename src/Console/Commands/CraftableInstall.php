@@ -224,7 +224,7 @@ class CraftableInstall extends Command
     {
         $this->strReplaceInFile(
             config_path('logging.php'),
-            '\'days\' => env(\'LOG_DAILY_DAYS\', 14)',
+            '\'days\' => env(\'LOG_DAILY_DAYS\', 14),',
             '\'days\' => env(\'LOG_DAILY_DAYS\', 14),
             \'tap\' => [Brackets\AdvancedLogger\LogCustomizers\HashLogCustomizer::class],',
         );
