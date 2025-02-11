@@ -89,7 +89,7 @@ class CraftableInstall extends Command
         ]);
         $this->call('vendor:publish', [
             '--provider' => 'Spatie\\Permission\\PermissionServiceProvider',
-            '--tag' => 'config',
+            '--tag' => 'permission-config',
         ]);
 
         //Spatie Backup
@@ -145,7 +145,7 @@ class CraftableInstall extends Command
         if (!$alreadyMigrated) {
             $this->call('vendor:publish', [
                 '--provider' => 'Spatie\\MediaLibrary\\MediaLibraryServiceProvider',
-                '--tag' => 'migrations',
+                '--tag' => 'medialibrary-migrations',
             ]);
         }
     }
@@ -222,13 +222,11 @@ class CraftableInstall extends Command
      */
     private function addHashToLogging(): void
     {
-        if (version_compare(app()->version(), '5.6.0', '>=')) {
-            $this->strReplaceInFile(
-                config_path('logging.php'),
-                '\'days\' => 14,',
-                '\'days\' => 90,
+        $this->strReplaceInFile(
+            config_path('logging.php'),
+            '\'days\' => env(\'LOG_DAILY_DAYS\', \'14\')',
+            '\'days\' => env(\'LOG_DAILY_DAYS\', \'14\'),
             \'tap\' => [Brackets\AdvancedLogger\LogCustomizers\HashLogCustomizer::class],',
-            );
-        }
+        );
     }
 }
