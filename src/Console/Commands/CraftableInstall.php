@@ -44,6 +44,8 @@ class CraftableInstall extends Command
 
         $this->addHashToLogging();
 
+        $this->addGitIgnoreToPublic();
+
         $this->call('admin-ui:install');
 
         $this->call('admin-auth:install', ['--dont-install-admin-ui' => true]);
@@ -228,5 +230,14 @@ class CraftableInstall extends Command
             '\'days\' => env(\'LOG_DAILY_DAYS\', 14),
             \'tap\' => [Brackets\AdvancedLogger\LogCustomizers\HashLogCustomizer::class],',
         );
+    }
+
+    private function addGitIgnoreToPublic()
+    {
+        if ($this->filesystem->exists(public_path('.gitignore'))) {
+            return;
+        }
+
+        $this->filesystem->put(public_path('.gitignore'), "/css\n/fonts\n/images\n/js\nmix-manifest.json");
     }
 }
