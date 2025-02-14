@@ -232,7 +232,7 @@ class CraftableInstall extends Command
         );
     }
 
-    private function addGitIgnoreToPublic()
+    private function addGitIgnoreToPublic(): void
     {
         if ($this->filesystem->exists(public_path('.gitignore'))) {
             return;
