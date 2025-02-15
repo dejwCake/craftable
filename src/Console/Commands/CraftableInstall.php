@@ -42,6 +42,7 @@ class CraftableInstall extends Command
 
         $this->publishAllVendors();
 
+        $this->addAdminRoutes();
         $this->addHashToLogging();
 
         $this->addGitIgnoreToPublic();
@@ -239,5 +240,19 @@ class CraftableInstall extends Command
         }
 
         $this->filesystem->put(public_path('.gitignore'), "/css\n/fonts\n/images\n/js\nmix-manifest.json");
+    }
+
+    private function addAdminRoutes(): void
+    {
+        $this->strReplaceInFile(
+            base_path('bootstrap/app.php'),
+            'web: __DIR__.\'/../routes/web.php\',',
+            'web: __DIR__.\'/../routes/web.php\',
+        then: function () {
+            Route::middleware(\'api\')
+                ->group(base_path(\'routes/admin.php\'));
+        },',
+            '|base_path(\'routes/admin.php\')|',
+        );
     }
 }
