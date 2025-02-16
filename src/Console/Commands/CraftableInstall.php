@@ -249,7 +249,7 @@ class CraftableInstall extends Command
             'web: __DIR__.\'/../routes/web.php\',',
             'web: __DIR__.\'/../routes/web.php\',
         then: function () {
-            Route::middleware(\'api\')
+            Route::middleware(\'web\')
                 ->group(base_path(\'routes/admin.php\'));
         },',
             '|base_path(\'routes/admin.php\')|',
