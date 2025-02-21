@@ -6,6 +6,7 @@ namespace Brackets\Craftable\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\DatabaseManager;
+use Throwable;
 
 class CraftableTestDBConnection extends Command
 {
@@ -34,7 +35,7 @@ class CraftableTestDBConnection extends Command
 
         try {
             $db->connection()->getPdo();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->error(
                 "Could not connect to the database. Please check your configuration. Error: " . $e->getMessage(),
             );

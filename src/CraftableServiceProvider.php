@@ -13,12 +13,6 @@ class CraftableServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        $this->commands([
-            CraftableInitializeEnv::class,
-            CraftableInstall::class,
-            CraftableTestDBConnection::class,
-        ]);
-
         if ($this->app->runningInConsole()) {
             if (!class_exists('FillDefaultAdminUserAndPermissions')) {
                 $timestamp = date('Y_m_d_His', time() + 5);
@@ -40,6 +34,10 @@ class CraftableServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        //do nothing
+        $this->commands([
+            CraftableInitializeEnv::class,
+            CraftableInstall::class,
+            CraftableTestDBConnection::class,
+        ]);
     }
 }

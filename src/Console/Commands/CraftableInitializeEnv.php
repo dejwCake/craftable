@@ -7,7 +7,7 @@ namespace Brackets\Craftable\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 
-class CraftableInitializeEnv extends Command
+final class CraftableInitializeEnv extends Command
 {
     /**
      * The name and signature of the console command.

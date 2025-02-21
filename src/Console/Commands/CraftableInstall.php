@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 
-class CraftableInstall extends Command
+final class CraftableInstall extends Command
 {
     /**
      * The name and signature of the console command.
@@ -119,7 +119,7 @@ class CraftableInstall extends Command
         $alreadyMigrated = false;
         $files = $this->filesystem->allFiles(database_path('migrations'));
         foreach ($files as $file) {
-            if (strpos($file->getFilename(), 'fill_default_admin_user_and_permissions.php') !== false) {
+            if (str_contains($file->getFilename(), 'fill_default_admin_user_and_permissions.php')) {
                 $alreadyMigrated = true;
 
                 break;
@@ -139,7 +139,7 @@ class CraftableInstall extends Command
         $alreadyMigrated = false;
         $files = $this->filesystem->allFiles(database_path('migrations'));
         foreach ($files as $file) {
-            if (strpos($file->getFilename(), 'create_media_table.php') !== false) {
+            if (str_contains($file->getFilename(), 'create_media_table.php')) {
                 $alreadyMigrated = true;
 
                 break;
@@ -162,7 +162,7 @@ class CraftableInstall extends Command
 
         $files = $this->filesystem->allFiles(database_path('migrations'));
         foreach ($files as $file) {
-            if (strpos($file->getFilename(), 'fill_default_admin_user_and_permissions.php') !== false) {
+            if (str_contains($file->getFilename(), 'fill_default_admin_user_and_permissions.php')) {
                 //change database/migrations/*fill_default_user_and_permissions.php to use new password
                 $this->strReplaceInFile(
                     database_path('migrations/' . $file->getFilename()),
