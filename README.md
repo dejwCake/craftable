@@ -63,31 +63,22 @@ Craftable requires:
 - npm 5.3+
 - node 8.4+
 
-Craftable uses Laravel so you should check out its requirements too. It is compatible with Laravel 11:
-- https://laravel.com/docs/11.x/installation#server-requirements
+Craftable uses Laravel so you should check out its requirements too. It is compatible with Laravel 12:
+- https://laravel.com/docs/12.x/installation
 
 ## Installation ##
 
 ### New Craftable project ###
 
-If you want to start on fresh Laravel, you can use our `brackets/craftable-installer` that do all the tricks for you. Let's install it globally:
-```bash
-composer global require "brackets/craftable-installer"
-```
+First you need to have laravel application, so follow the Laravel installation guide: https://laravel.com/docs/12.x/installation
 
 Create an empty database of your choice (PostgreSQL or MySQL).
 
-Now you can create a new Craftable project:
+Now you require these two main packages:
 ```bash
-craftable new my_project
+composer require dejwcake/craftable
+composer require --dev dejwcake/admin-generator
 ```
-
-This will install Craftable using latest Laravel version (currently 11):
-
-The command is going to ask for a database settings and then it will setup everything (install all dependencies, publish all important vendor configs, migrate, setup some configs, webpack config and run migrations).
-
-
-Command is going to generate and **print the password for the default administrator** account. Save this password to your clipboard, we are going to need it soon.
 
 ### Add Craftable to existing project ###
 
@@ -97,6 +88,8 @@ Or alternatively, you can use your existing Laravel application. Start with requ
 composer require dejwcake/craftable
 composer require --dev dejwcake/admin-generator
 ```
+
+### Package installation ###
 
 To install this package use:
 ```bash
@@ -114,7 +107,7 @@ Once installed, navigate your browser to `/admin/login`. You should be able to s
 ![Admin login form](https://docs.getcraftable.com/assets/login-form.png "Admin login form")
 
 Use these credentials to log in:
-- E-mail: `administrator@brackets.sk`
+- E-mail: `admin@getcraftable.com`
 - Password: use password from you clipboard (it was printed in the end of the `craftable:install` command)
 
 After authorization you should be able to see a default homepage and two menu items:
@@ -200,7 +193,7 @@ Have fun & craft something awesome!
 - Fork the repo to your Github.<br/>
 
 - Clone the Repo by going to your local Git Client in a particular local folder in your local machine by using this command with your forked repository link in place of below given link: <br/>
-  `git clone https://github.com/BRACKETS-by-TRIAD/craftable`
+  `git clone https://github.com/dejwcake/craftable`
 - Create a branch using below command.
   `git branch <your branch name>`
 - Checkout to your branch.
