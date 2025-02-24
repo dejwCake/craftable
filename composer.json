@@ -1,6 +1,6 @@
 {
     "name": "dejwcake/craftable",
-    "description": "Administration toolkit for Laravel 11 - starting point for developing administration interface",
+    "description": "Administration toolkit for Laravel - starting point for developing administration interface",
     "license": "MIT",
     "type": "project",
     "keywords": [
