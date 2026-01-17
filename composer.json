@@ -56,8 +56,7 @@
     "autoload": {
         "psr-4": {
             "Brackets\\Craftable\\": "src/"
-        },
-        "classmap": []
+        }
     },
     "autoload-dev": {
         "psr-4": {
