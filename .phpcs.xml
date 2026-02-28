@@ -7,9 +7,10 @@
 
     <config name="php_version" value="80200" />
 
-    <file>install-stubs/</file>
+    <file>database/</file>
     <file>resources/</file>
     <file>src/</file>
+    <file>tests/</file>
 
     <!--not exactly nice, but working solution-->
     <rule ref="/root/.composer/vendor/dejwcake/php-code-style/base.phpcs.xml">

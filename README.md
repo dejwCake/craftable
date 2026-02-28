@@ -224,5 +224,5 @@ docker compose run -it --rm php-qa phpstan analyse --configuration=phpstan.neon
 
 Mess detector (phpmd):
 ```shell
-docker compose run -it --rm php-qa phpmd ./src,./install-stubs,./resources,./tests ansi phpmd.xml --suffixes php --baseline-file phpmd.baseline.xml
+docker compose run -it --rm php-qa phpmd ./database,./resources,./src,./tests ansi phpmd.xml --suffixes php --baseline-file phpmd.baseline.xml
 ```

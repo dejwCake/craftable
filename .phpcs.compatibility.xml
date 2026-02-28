@@ -12,9 +12,10 @@
     <arg name="extensions" value="php" />
     <arg value="p" />
 
-    <file>install-stubs/</file>
+    <file>database/</file>
     <file>resources/</file>
     <file>src/</file>
+    <file>tests/</file>
 
     <!-- Include whole PHPCompatibility standard -->
     <rule ref="PHPCompatibility" />
