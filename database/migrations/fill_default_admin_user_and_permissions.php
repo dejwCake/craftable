@@ -40,8 +40,8 @@ return new class extends Migration
         $this->cache = $app->make(Cache::class);
         $this->hashManager = $app->make(HashManager::class);
         $this->guardName = $this->config->get('admin-auth.defaults.guard');
-        $providerName = $this->config->get('auth.guards.' . $this->guardName . '.provider');
-        $provider = $this->config->get('auth.providers.' . $providerName);
+        $providerName = $this->config->get(sprintf('auth.guards.%s.provider', $this->guardName));
+        $provider = $this->config->get(sprintf('auth.providers.%s', $providerName));
         if ($provider['driver'] !== 'eloquent') {
             throw new RuntimeException('Only Eloquent user provider is supported');
         }
