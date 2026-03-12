@@ -35,9 +35,10 @@ return new class extends Migration
 
     public function __construct()
     {
-        $this->config = app(Config::class);
-        $this->cache = app(Cache::class);
-        $this->hashManager = app(HashManager::class);
+        $app = app();
+        $this->config = $app->make(Config::class);
+        $this->cache = $app->make(Cache::class);
+        $this->hashManager = $app->make(HashManager::class);
         $this->guardName = $this->config->get('admin-auth.defaults.guard');
         $providerName = $this->config->get('auth.guards.' . $this->guardName . '.provider');
         $provider = $this->config->get('auth.providers.' . $providerName);
@@ -218,7 +219,7 @@ return new class extends Migration
                 $userId = DB::table($this->userTable)->insertGetId($user);
 
                 try {
-                    $this->userClassName::find($userId)->addMedia(storage_path() . '/images/avatar.png')
+                    $this->userClassName::find($userId)->addMedia(app()->storagePath('images/avatar.png'))
                         ->preservingOriginal()
                         ->toMediaCollection('avatar', 'media');
                 } catch (Throwable) {
