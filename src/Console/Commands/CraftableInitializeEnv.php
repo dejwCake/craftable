@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Brackets\Craftable\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Env;
 
 final class CraftableInitializeEnv extends Command
 {
@@ -25,8 +27,10 @@ final class CraftableInitializeEnv extends Command
      */
     protected $description = 'Initialize database environment variables';
 
-    public function __construct(private readonly Filesystem $filesystem)
-    {
+    public function __construct(
+        private readonly Filesystem $filesystem,
+        private readonly Application $app,
+    ) {
         parent::__construct();
     }
 
@@ -49,10 +53,10 @@ final class CraftableInitializeEnv extends Command
      */
     private function updateEnv(string $key, string $value, string $fileName = '.env'): bool|int
     {
-        $fileName = base_path($fileName);
+        $fileName = $this->app->basePath($fileName);
         $content = $this->filesystem->get($fileName);
 
-        return $this->filesystem->put($fileName, preg_replace('/' . $key . '=.*/', $key . '=' . $value, $content));
+        return $this->filesystem->put($fileName, preg_replace(sprintf('/%s=.*/', $key), sprintf('%s=%s', $key, $value), $content));
     }
 
     /**
@@ -76,7 +80,7 @@ final class CraftableInitializeEnv extends Command
      */
     private function setApplicationName(): void
     {
-        if (env('APP_NAME') === 'Laravel') {
+        if (Env::get('APP_NAME') === 'Laravel') {
             $this->updateEnv('APP_NAME', 'Craftable');
             $this->updateEnv('APP_NAME', 'Craftable', '.env.example');
         }
@@ -87,14 +91,8 @@ final class CraftableInitializeEnv extends Command
      */
     private function isDefaultDatabaseEnv(): bool
     {
-        return
-            version_compare(app()::VERSION, '5.8.35', '<') &&
-                (env('DB_DATABASE') === 'homestead' &&
-                    env('DB_USERNAME') === 'homestead') ||
-            version_compare(app()::VERSION, '5.8.35', '>=') &&
-                (env('DB_DATABASE') === 'laravel' &&
-                    env('DB_USERNAME') === 'root')
-        ;
+        return Env::get('DB_DATABASE') === 'laravel'
+            && Env::get('DB_USERNAME') === 'root';
     }
 
     private function updateDbConnection(): void
@@ -118,7 +116,7 @@ final class CraftableInitializeEnv extends Command
         $port = $this->anticipate(
             'What is your database port?',
             ['3306', '5432'],
-            env('DB_CONNECTION') === 'mysql' ? '3306' : '5432',
+            Env::get('DB_CONNECTION') === 'mysql' ? '3306' : '5432',
         );
         if ($port !== null && $port !== '') {
             $this->updateEnv('DB_PORT', $port);

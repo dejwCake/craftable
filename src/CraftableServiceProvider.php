@@ -9,7 +9,7 @@ use Brackets\Craftable\Console\Commands\CraftableInstall;
 use Brackets\Craftable\Console\Commands\CraftableTestDBConnection;
 use Illuminate\Support\ServiceProvider;
 
-class CraftableServiceProvider extends ServiceProvider
+final class CraftableServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
@@ -29,19 +29,23 @@ class CraftableServiceProvider extends ServiceProvider
 
     private function publish(): void
     {
-        if (!class_exists('FillDefaultAdminUserAndPermissions')) {
-            $timestamp = date('Y_m_d_His', time() + 5);
+        $timestamp = date('Y_m_d_His', time() + 5);
 
+        if (!glob($this->app->databasePath('migrations/*_fill_default_admin_user_and_permissions.php'))) {
             $this->publishes([
-                __DIR__ . '/../install-stubs/database/migrations/fill_default_admin_user_and_permissions.php' =>
-                    $this->app->databasePath('migrations')
-                    . '/' . $timestamp . '_fill_default_admin_user_and_permissions.php',
+                __DIR__ . '/../database/migrations/fill_default_admin_user_and_permissions.php'
+                => sprintf(
+                    '%s/%s_fill_default_admin_user_and_permissions.php',
+                    $this->app->databasePath('migrations'),
+                    $timestamp,
+                ),
             ], 'migrations');
         }
 
-        if (!file_exists(storage_path() . '/images/avatar.png')) {
+        $avatarPath = sprintf('%s/images/avatar.png', $this->app->storagePath());
+        if (!file_exists($avatarPath)) {
             $this->publishes([
-                __DIR__ . '/../resources/images/avatar.png' => $this->app->storagePath() . '/images/avatar.png',
+                __DIR__ . '/../resources/images/avatar.png' => $avatarPath,
             ], 'images');
         }
     }

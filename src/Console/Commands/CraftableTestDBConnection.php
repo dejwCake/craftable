@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 use Illuminate\Database\DatabaseManager;
 use Throwable;
 
-class CraftableTestDBConnection extends Command
+final class CraftableTestDBConnection extends Command
 {
     /**
      * The name and signature of the console command.
@@ -37,7 +37,7 @@ class CraftableTestDBConnection extends Command
             $db->connection()->getPdo();
         } catch (Throwable $e) {
             $this->error(
-                "Could not connect to the database. Please check your configuration. Error: " . $e->getMessage(),
+                sprintf('Could not connect to the database. Please check your configuration. Error: %s', $e->getMessage()),
             );
 
             return self::FAILURE;

@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Brackets\Craftable\Console\Commands;
 
+use Brackets\Craftable\CraftableServiceProvider;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Config\Repository;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 
@@ -28,8 +31,11 @@ final class CraftableInstall extends Command
 
     protected string $password = '';
 
-    public function __construct(private readonly Filesystem $filesystem)
-    {
+    public function __construct(
+        private readonly Filesystem $filesystem,
+        private readonly Application $app,
+        private readonly Repository $config,
+    ) {
         parent::__construct();
     }
 
@@ -60,7 +66,7 @@ final class CraftableInstall extends Command
         $this->call('admin-listing:install');
 
         if ($this->password) {
-            $this->comment('Admin password is: ' . $this->password);
+            $this->comment(sprintf('Admin password is: %s', $this->password));
         }
 
         $this->info('Craftable installed.');
@@ -116,28 +122,17 @@ final class CraftableInstall extends Command
 
     private function publishCraftable(): void
     {
-        $alreadyMigrated = false;
-        $files = $this->filesystem->allFiles(database_path('migrations'));
-        foreach ($files as $file) {
-            if (str_contains($file->getFilename(), 'fill_default_admin_user_and_permissions.php')) {
-                $alreadyMigrated = true;
+        $this->call('vendor:publish', [
+            '--provider' => CraftableServiceProvider::class,
+        ]);
 
-                break;
-            }
-        }
-        if (!$alreadyMigrated) {
-            $this->call('vendor:publish', [
-                '--provider' => "Brackets\\Craftable\\CraftableServiceProvider",
-            ]);
-
-            $this->generatePasswordAndUpdateMigration();
-        }
+        $this->generatePasswordAndUpdateMigration();
     }
 
     private function publishSpatieMediaLibrary(): void
     {
         $alreadyMigrated = false;
-        $files = $this->filesystem->allFiles(database_path('migrations'));
+        $files = $this->filesystem->allFiles($this->app->databasePath('migrations'));
         foreach ($files as $file) {
             if (str_contains($file->getFilename(), 'create_media_table.php')) {
                 $alreadyMigrated = true;
@@ -153,25 +148,25 @@ final class CraftableInstall extends Command
         }
     }
 
-    /**
-     * Generate new password and change default password in migration to use new password
-     */
     private function generatePasswordAndUpdateMigration(): void
     {
-        $this->password = Str::random(10);
-
-        $files = $this->filesystem->allFiles(database_path('migrations'));
+        $files = $this->filesystem->allFiles($this->app->databasePath('migrations'));
         foreach ($files as $file) {
-            if (str_contains($file->getFilename(), 'fill_default_admin_user_and_permissions.php')) {
-                //change database/migrations/*fill_default_user_and_permissions.php to use new password
-                $this->strReplaceInFile(
-                    database_path('migrations/' . $file->getFilename()),
-                    'best package ever',
-                    '' . $this->password . '',
-                );
-
-                break;
+            if (!str_contains($file->getFilename(), 'fill_default_admin_user_and_permissions.php')) {
+                continue;
             }
+
+            $filePath = $this->app->databasePath(sprintf('migrations/%s', $file->getFilename()));
+            $content = $this->filesystem->get($filePath);
+
+            if (str_contains($content, "'best package ever'")) {
+                $this->password = Str::random(10);
+                $this->filesystem->put($filePath, str_replace('best package ever', $this->password, $content));
+            } elseif (preg_match("/protected string \\\$password = '(.+)';/", $content, $matches)) {
+                $this->password = $matches[1];
+            }
+
+            break;
         }
     }
 
@@ -180,17 +175,19 @@ final class CraftableInstall extends Command
      */
     private function generateUserStuff(): void
     {
-        // TODO this is probably redundant?
-        // Migrate
         $this->call('migrate');
 
-        // Generate User CRUD (with new model)
-        $this->call('admin:generate:admin-user', [
-            '--force' => true,
-        ]);
+        $application = $this->getApplication();
 
-        // Generate user profile
-        $this->call('admin:generate:admin-user:profile');
+        if ($application !== null && $application->has('admin:generate:admin-user')) {
+            $this->call('admin:generate:admin-user', [
+                '--force' => true,
+            ]);
+        }
+
+        if ($application !== null && $application->has('admin:generate:admin-user:profile')) {
+            $this->call('admin:generate:admin-user:profile');
+        }
     }
 
     /**
@@ -201,21 +198,38 @@ final class CraftableInstall extends Command
         // Scan translations
         $this->info('Scanning codebase and storing all translations');
 
+        $configPath = $this->app->configPath('admin-translations.php');
+        $vendorPaths = [
+            'vendor/dejwcake/admin-auth/src',
+            'vendor/dejwcake/admin-auth/resources',
+            'vendor/dejwcake/admin-ui/resources',
+            'vendor/dejwcake/admin-translations/resources',
+            'vendor/dejwcake/craftable-media/src',
+        ];
+
         $this->strReplaceInFile(
-            config_path('admin-translations.php'),
+            $configPath,
             '// here you can add your own directories',
             '// here you can add your own directories
-        // base_path(\'routes\'), // uncomment if you have translations in your routes i.e. you have localized URLs
-        base_path(\'vendor/dejwcake/admin-auth/src\'),
-        base_path(\'vendor/dejwcake/admin-auth/resources\'),
-        base_path(\'vendor/dejwcake/admin-ui/resources\'),
-        base_path(\'vendor/dejwcake/admin-translations/resources\'),',
+        // base_path(\'routes\'), // uncomment if you have translations in your routes i.e. you have localized URLs',
+            '|base_path\(\'routes\'\)|',
         );
+
+        foreach ($vendorPaths as $vendorPath) {
+            $escapedPath = preg_quote($vendorPath, '|');
+            $this->strReplaceInFile(
+                $configPath,
+                '// here you can add your own directories',
+                '// here you can add your own directories
+        base_path(\'' . $vendorPath . '\'),',
+                '|' . $escapedPath . '|',
+            );
+        }
 
         $this->call('admin-translations:scan-and-save', [
             'paths' => array_merge(
-                config('admin-translations.scanned_directories'),
-                ['vendor/dejwcake/admin-auth/src', 'vendor/dejwcake/admin-auth/resources'],
+                $this->config->get('admin-translations.scanned_directories'),
+                $vendorPaths,
             ),
         ]);
     }
@@ -226,7 +240,7 @@ final class CraftableInstall extends Command
     private function addHashToLogging(): void
     {
         $this->strReplaceInFile(
-            config_path('logging.php'),
+            $this->app->configPath('logging.php'),
             '\'days\' => env(\'LOG_DAILY_DAYS\', 14),',
             '\'days\' => env(\'LOG_DAILY_DAYS\', 14),
             \'tap\' => [Brackets\AdvancedLogger\LogCustomizers\HashLogCustomizer::class],',
@@ -235,17 +249,24 @@ final class CraftableInstall extends Command
 
     private function addGitIgnoreToPublic(): void
     {
-        if ($this->filesystem->exists(public_path('.gitignore'))) {
+        $gitignorePath = $this->app->publicPath('.gitignore');
+
+        if ($this->filesystem->exists($gitignorePath)) {
+            $content = $this->filesystem->get($gitignorePath);
+            if (! str_contains($content, '/build')) {
+                $this->filesystem->put($gitignorePath, rtrim($content, "\n") . "\n/build\n");
+            }
+
             return;
         }
 
-        $this->filesystem->put(public_path('.gitignore'), "/css\n/fonts\n/images\n/js\nmix-manifest.json");
+        $this->filesystem->put($gitignorePath, "/build\n");
     }
 
     private function addAdminRoutes(): void
     {
         $this->strReplaceInFile(
-            base_path('bootstrap/app.php'),
+            $this->app->basePath('bootstrap/app.php'),
             'web: __DIR__.\'/../routes/web.php\',',
             'web: __DIR__.\'/../routes/web.php\',
         then: function () {

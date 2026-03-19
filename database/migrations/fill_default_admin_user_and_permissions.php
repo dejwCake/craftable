@@ -6,13 +6,16 @@ use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Config\Repository as Config;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Hashing\HashManager;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
+    protected Application $app;
+    protected ConnectionInterface $db;
     protected Config $config;
     protected Cache $cache;
     protected HashManager $hashManager;
@@ -35,10 +38,11 @@ return new class extends Migration
 
     public function __construct()
     {
-        $app = app();
-        $this->config = $app->make(Config::class);
-        $this->cache = $app->make(Cache::class);
-        $this->hashManager = $app->make(HashManager::class);
+        $this->app = app();
+        $this->db = $this->app->make(ConnectionInterface::class);
+        $this->config = $this->app->make(Config::class);
+        $this->cache = $this->app->make(Cache::class);
+        $this->hashManager = $this->app->make(HashManager::class);
         $this->guardName = $this->config->get('admin-auth.defaults.guard');
         $providerName = $this->config->get(sprintf('auth.guards.%s.provider', $this->guardName));
         $provider = $this->config->get(sprintf('auth.providers.%s', $providerName));
@@ -63,7 +67,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::transaction(function (): void {
+        $this->db->transaction(function (): void {
             $this->upPermissions();
             $this->upRoles();
             $this->upUsers();
@@ -79,7 +83,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::transaction(function (): void {
+        $this->db->transaction(function (): void {
             $this->downUsers();
             $this->downRoles();
             $this->downPermissions();
@@ -163,12 +167,12 @@ return new class extends Migration
     private function upPermissions(): void
     {
         foreach ($this->permissions as $permission) {
-            $permissionItem = DB::table('permissions')->where([
+            $permissionItem = $this->db->table('permissions')->where([
                 'name' => $permission['name'],
                 'guard_name' => $permission['guard_name'],
             ])->first();
             if ($permissionItem === null) {
-                DB::table('permissions')->insert($permission);
+                $this->db->table('permissions')->insert($permission);
             }
         }
     }
@@ -179,13 +183,13 @@ return new class extends Migration
             $permissions = $role['permissions'];
             unset($role['permissions']);
 
-            $roleItem = DB::table('roles')->where([
+            $roleItem = $this->db->table('roles')->where([
                 'name' => $role['name'],
                 'guard_name' => $role['guard_name'],
             ])->first();
-            $roleId = $roleItem === null ? DB::table('roles')->insertGetId($role) : $roleItem->id;
+            $roleId = $roleItem === null ? $this->db->table('roles')->insertGetId($role) : $roleItem->id;
 
-            $permissionItems = DB::table('permissions')
+            $permissionItems = $this->db->table('permissions')
                 ->whereIn('name', $permissions)
                 ->where('guard_name', $role['guard_name'])->get();
             foreach ($permissionItems as $permissionItem) {
@@ -193,10 +197,10 @@ return new class extends Migration
                     'permission_id' => $permissionItem->id,
                     'role_id' => $roleId,
                 ];
-                $roleHasPermissionItem = DB::table('role_has_permissions')
+                $roleHasPermissionItem = $this->db->table('role_has_permissions')
                     ->where($roleHasPermissionData)->first();
                 if ($roleHasPermissionItem === null) {
-                    DB::table('role_has_permissions')->insert($roleHasPermissionData);
+                    $this->db->table('role_has_permissions')->insert($roleHasPermissionData);
                 }
             }
         }
@@ -211,15 +215,15 @@ return new class extends Migration
             $permissions = $user['permissions'];
             unset($user['permissions']);
 
-            $userItem = DB::table($this->userTable)->where([
+            $userItem = $this->db->table($this->userTable)->where([
                 'email' => $user['email'],
             ])->first();
 
             if ($userItem === null) {
-                $userId = DB::table($this->userTable)->insertGetId($user);
+                $userId = $this->db->table($this->userTable)->insertGetId($user);
 
                 try {
-                    $this->userClassName::find($userId)->addMedia(app()->storagePath('images/avatar.png'))
+                    $this->userClassName::find($userId)->addMedia($this->app->storagePath('images/avatar.png'))
                         ->preservingOriginal()
                         ->toMediaCollection('avatar', 'media');
                 } catch (Throwable) {
@@ -236,7 +240,7 @@ return new class extends Migration
     private function upUserRoles(array $roles, int $userId): void
     {
         foreach ($roles as $role) {
-            $roleItem = DB::table('roles')->where([
+            $roleItem = $this->db->table('roles')->where([
                 'name' => $role['name'],
                 'guard_name' => $role['guard_name'],
             ])->first();
@@ -246,9 +250,9 @@ return new class extends Migration
                 'model_id' => $userId,
                 'model_type' => $this->userClassName,
             ];
-            $modelHasRoleItem = DB::table('model_has_roles')->where($modelHasRoleData)->first();
+            $modelHasRoleItem = $this->db->table('model_has_roles')->where($modelHasRoleData)->first();
             if ($modelHasRoleItem === null) {
-                DB::table('model_has_roles')->insert($modelHasRoleData);
+                $this->db->table('model_has_roles')->insert($modelHasRoleData);
             }
         }
     }
@@ -257,7 +261,7 @@ return new class extends Migration
     private function upUserPermissions(array $permissions, int $userId): void
     {
         foreach ($permissions as $permission) {
-            $permissionItem = DB::table('permissions')->where([
+            $permissionItem = $this->db->table('permissions')->where([
                 'name' => $permission['name'],
                 'guard_name' => $permission['guard_name'],
             ])->first();
@@ -267,9 +271,9 @@ return new class extends Migration
                 'model_id' => $userId,
                 'model_type' => $this->userClassName,
             ];
-            $modelHasPermissionItem = DB::table('model_has_permissions')->where($modelHasPermissionData)->first();
+            $modelHasPermissionItem = $this->db->table('model_has_permissions')->where($modelHasPermissionData)->first();
             if ($modelHasPermissionItem === null) {
-                DB::table('model_has_permissions')->insert($modelHasPermissionData);
+                $this->db->table('model_has_permissions')->insert($modelHasPermissionData);
             }
         }
     }
@@ -277,19 +281,19 @@ return new class extends Migration
     private function downUsers(): void
     {
         foreach ($this->users as $user) {
-            $userItem = DB::table($this->userTable)->where('email', $user['email'])->first();
+            $userItem = $this->db->table($this->userTable)->where('email', $user['email'])->first();
             if ($userItem !== null) {
                 try {
                     $this->userClassName::find($userItem->id)->media()->delete();
                 } catch (Throwable) {
                     // do nothing
                 }
-                DB::table($this->userTable)->where('id', $userItem->id)->delete();
-                DB::table('model_has_permissions')->where([
+                $this->db->table($this->userTable)->where('id', $userItem->id)->delete();
+                $this->db->table('model_has_permissions')->where([
                     'model_id' => $userItem->id,
                     'model_type' => $this->userClassName,
                 ])->delete();
-                DB::table('model_has_roles')->where([
+                $this->db->table('model_has_roles')->where([
                     'model_id' => $userItem->id,
                     'model_type' => $this->userClassName,
                 ])->delete();
@@ -300,13 +304,13 @@ return new class extends Migration
     private function downRoles(): void
     {
         foreach ($this->roles as $role) {
-            $roleItem = DB::table('roles')->where([
+            $roleItem = $this->db->table('roles')->where([
                 'name' => $role['name'],
                 'guard_name' => $role['guard_name'],
             ])->first();
             if ($roleItem !== null) {
-                DB::table('roles')->where('id', $roleItem->id)->delete();
-                DB::table('model_has_roles')->where('role_id', $roleItem->id)->delete();
+                $this->db->table('roles')->where('id', $roleItem->id)->delete();
+                $this->db->table('model_has_roles')->where('role_id', $roleItem->id)->delete();
             }
         }
     }
@@ -314,13 +318,13 @@ return new class extends Migration
     private function downPermissions(): void
     {
         foreach ($this->permissions as $permission) {
-            $permissionItem = DB::table('permissions')->where([
+            $permissionItem = $this->db->table('permissions')->where([
                 'name' => $permission['name'],
                 'guard_name' => $permission['guard_name'],
             ])->first();
             if ($permissionItem !== null) {
-                DB::table('permissions')->where('id', $permissionItem->id)->delete();
-                DB::table('model_has_permissions')->where('permission_id', $permissionItem->id)->delete();
+                $this->db->table('permissions')->where('id', $permissionItem->id)->delete();
+                $this->db->table('model_has_permissions')->where('permission_id', $permissionItem->id)->delete();
             }
         }
     }
