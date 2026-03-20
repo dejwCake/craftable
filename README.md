@@ -56,21 +56,21 @@ Craftable uses all the packages above. It also uses some other 3rd party package
 ## Requirements ##
 
 Craftable requires:
-- PHP 8.2+
+- PHP 8.5+
 - Supported databases:
-  - MariaDB 11.6+
-  - PostgreSQL 17+
+  - MariaDB 12.1+
+  - PostgreSQL 18+
 - npm 5.3+
 - Node.js 8.4+
 
-Craftable is built on Laravel, so you should check out its requirements too. It is compatible with Laravel 12:
-- https://laravel.com/docs/12.x/installation
+Craftable is built on Laravel, so you should check out its requirements too. It is compatible with Laravel 13:
+- https://laravel.com/docs/13.x/installation
 
 ## Installation ##
 
 ### New Craftable project ###
 
-First you need to have a Laravel application, so follow the Laravel installation guide: https://laravel.com/docs/12.x/installation
+First you need to have a Laravel application, so follow the Laravel installation guide: https://laravel.com/docs/13.x/installation
 
 Create an empty database of your choice (PostgreSQL or MySQL).
 

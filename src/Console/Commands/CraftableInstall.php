@@ -29,7 +29,7 @@ final class CraftableInstall extends Command
      */
     protected $description = 'Install a Craftable (brackets/craftable) instance';
 
-    protected string $password = '';
+    private string $password = '';
 
     public function __construct(
         private readonly Filesystem $filesystem,

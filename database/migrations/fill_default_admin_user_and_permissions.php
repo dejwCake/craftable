@@ -11,6 +11,8 @@ use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Hashing\HashManager;
 use Illuminate\Support\Collection;
+use RuntimeException;
+use Throwable;
 
 return new class extends Migration
 {

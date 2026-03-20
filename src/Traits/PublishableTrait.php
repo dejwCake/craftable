@@ -98,8 +98,7 @@ trait PublishableTrait
     {
         if ($this instanceof Model) {
             return $this->hasAttribute('published_at')
-                || ($this->dates !== null && in_array('published_at', $this->dates, true))
-                || ($this->casts !== null && in_array('published_at', $this->casts, true));
+                || $this->hasCast('published_at');
         }
 
         return false;
@@ -109,8 +108,7 @@ trait PublishableTrait
     {
         if ($this instanceof Model) {
             return $this->hasAttribute('published_to')
-                || ($this->dates !== null && in_array('published_to', $this->dates, true))
-                || ($this->casts !== null && in_array('published_to', $this->casts, true));
+                || $this->hasCast('published_to');
         }
 
         return false;
