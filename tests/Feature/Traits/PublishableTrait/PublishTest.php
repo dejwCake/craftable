@@ -40,11 +40,7 @@ class PublishTest extends PublishableTestCase
     public function testKeepsFuturePublishedTo(): void
     {
         $futureDate = CarbonImmutable::now()->addWeek();
-        $model = $this->createPublishableModel(
-            'test',
-            null,
-            $futureDate,
-        );
+        $model = $this->createPublishableModel('test', null, $futureDate);
 
         $model->publish();
         $model->refresh();

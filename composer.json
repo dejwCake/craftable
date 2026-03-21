@@ -2,7 +2,7 @@
     "name": "dejwcake/craftable",
     "description": "Administration toolkit for Laravel - starting point for developing administration interface",
     "license": "MIT",
-    "type": "project",
+    "type": "library",
     "keywords": [
         "craftable",
         "crud",
@@ -53,6 +53,8 @@
         "orchestra/testbench": "^11.0",
         "phpunit/phpunit": "^13.0"
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "Brackets\\Craftable\\": "src/"
@@ -64,14 +66,14 @@
         }
     },
     "extra": {
+        "branch-alias": {
+            "dev-main": "2.0-dev",
+            "dev-v2-dev": "2.0-dev"
+        },
         "laravel": {
             "providers": [
                 "Brackets\\Craftable\\CraftableServiceProvider"
             ]
-        },
-        "branch-alias": {
-            "dev-main": "1.0-dev",
-            "dev-v2-dev": "2.0-dev"
         }
     }
 }

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Brackets\Craftable\Tests\Unit\Traits;
+namespace Brackets\Craftable\Tests\Feature\Traits\UpdatedByAdminUserTrait;
 
 use Brackets\AdminAuth\Models\AdminUser;
+use Brackets\Craftable\Tests\TestCase;
 use Brackets\Craftable\Tests\TestUpdatedByModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use PHPUnit\Framework\TestCase;
 
-class UpdatedByAdminUserTraitTest extends TestCase
+class UpdatedByAdminUserTest extends TestCase
 {
     public function testReturnsCorrectBelongsToRelation(): void
     {

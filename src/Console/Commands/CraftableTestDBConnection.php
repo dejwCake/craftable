@@ -37,7 +37,10 @@ final class CraftableTestDBConnection extends Command
             $db->connection()->getPdo();
         } catch (Throwable $e) {
             $this->error(
-                sprintf('Could not connect to the database. Please check your configuration. Error: %s', $e->getMessage()),
+                sprintf(
+                    'Could not connect to the database. Please check your configuration. Error: %s',
+                    $e->getMessage(),
+                ),
             );
 
             return self::FAILURE;

@@ -60,7 +60,7 @@ trait PublishableTrait
         return $this->published_at->lte(CarbonImmutable::now())
             && (
                 $this->hasPublishedTo()
-                ? ($this->published_to->gte(CarbonImmutable::now()) || $this->published_to === null)
+                ? ($this->published_to === null || $this->published_to->gte(CarbonImmutable::now()))
                 : true
             );
     }
@@ -80,7 +80,11 @@ trait PublishableTrait
             'published_at' => CarbonImmutable::now(),
         ];
 
-        if ($this->hasPublishedTo() && $this->published_to->lte(CarbonImmutable::now())) {
+        if (
+            $this->hasPublishedTo()
+            && $this->published_to !== null
+            && $this->published_to->lte(CarbonImmutable::now())
+        ) {
             $data['published_to'] = null;
         }
 

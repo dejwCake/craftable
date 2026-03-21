@@ -5,8 +5,13 @@ declare(strict_types=1);
 namespace Brackets\Craftable\Tests;
 
 use Brackets\Craftable\Traits\PublishableTrait;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string $name
+ * @property CarbonInterface $published_at
+ */
 class TestPublishableWithoutToModel extends Model
 {
     use PublishableTrait;
@@ -22,12 +27,6 @@ class TestPublishableWithoutToModel extends Model
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
      */
     protected $guarded = [];
-
-    /**
-     * @var bool
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
-     */
-    public $timestamps = false;
 
     /**
      * @return array<string, string>

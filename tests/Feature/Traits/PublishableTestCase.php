@@ -20,17 +20,22 @@ abstract class PublishableTestCase extends TestCase
 
         $schemaBuilder = $this->app['db']->connection()->getSchemaBuilder();
 
+        $schemaBuilder->dropIfExists('test_publishable_models');
+        $schemaBuilder->dropIfExists('test_publishable_without_to_models');
+
         $schemaBuilder->create('test_publishable_models', static function (Blueprint $table): void {
             $table->id();
             $table->string('name');
             $table->dateTime('published_at')->nullable();
             $table->dateTime('published_to')->nullable();
+            $table->timestamps();
         });
 
         $schemaBuilder->create('test_publishable_without_to_models', static function (Blueprint $table): void {
             $table->id();
             $table->string('name');
             $table->dateTime('published_at')->nullable();
+            $table->timestamps();
         });
     }
 

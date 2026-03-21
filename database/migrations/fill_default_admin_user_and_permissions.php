@@ -11,8 +11,6 @@ use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Hashing\HashManager;
 use Illuminate\Support\Collection;
-use RuntimeException;
-use Throwable;
 
 return new class extends Migration
 {
@@ -273,7 +271,9 @@ return new class extends Migration
                 'model_id' => $userId,
                 'model_type' => $this->userClassName,
             ];
-            $modelHasPermissionItem = $this->db->table('model_has_permissions')->where($modelHasPermissionData)->first();
+            $modelHasPermissionItem = $this->db->table('model_has_permissions')->where(
+                $modelHasPermissionData,
+            )->first();
             if ($modelHasPermissionItem === null) {
                 $this->db->table('model_has_permissions')->insert($modelHasPermissionData);
             }

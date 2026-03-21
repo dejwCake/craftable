@@ -26,6 +26,7 @@
         <properties>
             <property name="rootNamespaces" type="array">
                 <element key="src" value="Brackets\Craftable"/>
+                <element key="tests" value="Brackets\Craftable\Tests"/>
             </property>
         </properties>
     </rule>

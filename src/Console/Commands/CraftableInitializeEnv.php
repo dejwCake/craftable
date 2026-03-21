@@ -27,10 +27,8 @@ final class CraftableInitializeEnv extends Command
      */
     protected $description = 'Initialize database environment variables';
 
-    public function __construct(
-        private readonly Filesystem $filesystem,
-        private readonly Application $app,
-    ) {
+    public function __construct(private readonly Filesystem $filesystem, private readonly Application $app,)
+    {
         parent::__construct();
     }
 
@@ -56,7 +54,10 @@ final class CraftableInitializeEnv extends Command
         $fileName = $this->app->basePath($fileName);
         $content = $this->filesystem->get($fileName);
 
-        return $this->filesystem->put($fileName, preg_replace(sprintf('/%s=.*/', $key), sprintf('%s=%s', $key, $value), $content));
+        return $this->filesystem->put(
+            $fileName,
+            preg_replace(sprintf('/%s=.*/', $key), sprintf('%s=%s', $key, $value), $content),
+        );
     }
 
     /**
