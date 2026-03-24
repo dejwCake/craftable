@@ -42,11 +42,11 @@ The service provider now uses `glob()` to check whether the migration has alread
 
 The `fill_default_admin_user_and_permissions` migration has been rewritten:
 
-- `DB` facade replaced with `ConnectionInterface` injected via `app()->make()`
-- `app(Config::class)` replaced with `$this->app->make(Config::class)`
+- `DB` facade replaced with `ConnectionInterface` resolved via `$this->app->make(ConnectionInterface::class)`
+- All dependencies (`ConnectionInterface`, `Config`, `Cache`, `HashManager`) resolved via `$this->app->make()` where `$this->app` is obtained from the `app()` helper in the constructor
 - String concatenation replaced with `sprintf()`
 - Added `use RuntimeException;` and `use Throwable;` imports (previously used unqualified)
-- Added `Application` property for container access
+- Added `protected Application $app` property populated from the `app()` helper for container access
 
 **Action required:** If you have customized the published migration, compare with the new version and port your changes.
 
