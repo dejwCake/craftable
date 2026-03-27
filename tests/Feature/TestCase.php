@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Brackets\Craftable\Tests;
+namespace Brackets\Craftable\Tests\Feature;
 
 use Brackets\Craftable\CraftableServiceProvider;
 use Illuminate\Foundation\Application;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Brackets\Craftable\Tests\Feature\Console\Commands\CraftableTestDBConnection;
 
-use Brackets\Craftable\Tests\TestCase;
+use Brackets\Craftable\Tests\Feature\TestCase;
 use Illuminate\Database\DatabaseManager;
 use Mockery;
 use PDOException;

@@ -19,6 +19,18 @@ parameters:
 			path: database/migrations/fill_default_admin_user_and_permissions.php
 
 		-
+			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
+			identifier: larastan.noEnvCallsOutsideOfConfig
+			count: 8
+			path: tests/Feature/TestCase.php
+
+		-
+			message: '#^Access to an undefined property Brackets\\Craftable\\Tests\\Feature\\TestPublishableWithoutToModel\:\:\$published_to\.$#'
+			identifier: property.notFound
+			count: 2
+			path: tests/Feature/TestPublishableWithoutToModel.php
+
+		-
 			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsTo'' and Illuminate\\Database\\Eloquent\\Relations\\BelongsTo will always evaluate to true\.$#'
 			identifier: staticMethod.alreadyNarrowedType
 			count: 1
@@ -29,17 +41,5 @@ parameters:
 			identifier: staticMethod.alreadyNarrowedType
 			count: 1
 			path: tests/Feature/Traits/UpdatedByAdminUserTrait/UpdatedByAdminUserTest.php
-
-		-
-			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
-			identifier: larastan.noEnvCallsOutsideOfConfig
-			count: 8
-			path: tests/TestCase.php
-
-		-
-			message: '#^Access to an undefined property Brackets\\Craftable\\Tests\\TestPublishableWithoutToModel\:\:\$published_to\.$#'
-			identifier: property.notFound
-			count: 2
-			path: tests/TestPublishableWithoutToModel.php
 
 

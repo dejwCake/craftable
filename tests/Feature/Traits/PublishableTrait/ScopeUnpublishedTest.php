@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Brackets\Craftable\Tests\Feature\Traits\PublishableTrait;
 
+use Brackets\Craftable\Tests\Feature\TestPublishableModel;
+use Brackets\Craftable\Tests\Feature\TestPublishableWithoutToModel;
 use Brackets\Craftable\Tests\Feature\Traits\PublishableTestCase;
-use Brackets\Craftable\Tests\TestPublishableModel;
-use Brackets\Craftable\Tests\TestPublishableWithoutToModel;
 use Carbon\CarbonImmutable;
 
 class ScopeUnpublishedTest extends PublishableTestCase

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Brackets\Craftable\Tests\Feature\Traits;
 
-use Brackets\Craftable\Tests\TestCase;
-use Brackets\Craftable\Tests\TestPublishableModel;
-use Brackets\Craftable\Tests\TestPublishableWithoutToModel;
+use Brackets\Craftable\Tests\Feature\TestCase;
+use Brackets\Craftable\Tests\Feature\TestPublishableModel;
+use Brackets\Craftable\Tests\Feature\TestPublishableWithoutToModel;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Schema\Blueprint;
 use Override;

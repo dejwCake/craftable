@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Brackets\Craftable\Tests;
+namespace Brackets\Craftable\Tests\Feature;
 
-use Brackets\Craftable\Traits\CreatedByAdminUserTrait;
+use Brackets\Craftable\Traits\UpdatedByAdminUserTrait;
 use Illuminate\Database\Eloquent\Model;
 
-class TestCreatedByModel extends Model
+class TestUpdatedByModel extends Model
 {
-    use CreatedByAdminUserTrait;
+    use UpdatedByAdminUserTrait;
 
     /**
      * @var string

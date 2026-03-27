@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Brackets\Craftable\Tests\Feature\Traits\UpdatedByAdminUserTrait;
 
 use Brackets\AdminAuth\Models\AdminUser;
-use Brackets\Craftable\Tests\TestCase;
-use Brackets\Craftable\Tests\TestUpdatedByModel;
+use Brackets\Craftable\Tests\Feature\TestCase;
+use Brackets\Craftable\Tests\Feature\TestUpdatedByModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UpdatedByAdminUserTest extends TestCase
