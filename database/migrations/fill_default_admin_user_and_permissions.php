@@ -138,21 +138,23 @@ return new class extends Migration
             'admin',
 
             // manage translations
+            'admin.translation',
             'admin.translation.index',
             'admin.translation.edit',
             'admin.translation.rescan',
 
             // manage users (access)
+            'admin.admin-user',
             'admin.admin-user.index',
             'admin.admin-user.create',
+            'admin.admin-user.show',
             'admin.admin-user.edit',
             'admin.admin-user.delete',
+            'admin.admin-user.bulk-delete',
+            'admin.admin-user.impersonal-login',
 
             // ability to upload
             'admin.upload',
-
-            //ability to impersonal login
-            'admin.admin-user.impersonal-login',
         ]);
 
         //Add new permissions
