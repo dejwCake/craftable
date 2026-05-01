@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Brackets\Craftable\Console\Commands;
 
+use Brackets\Craftable\Console\Support\ComposerJsonEditor;
+use Brackets\Craftable\Console\Support\GitIgnoreEditor;
 use Brackets\Craftable\CraftableServiceProvider;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Config\Repository;
@@ -35,6 +37,8 @@ final class CraftableInstall extends Command
         private readonly Filesystem $filesystem,
         private readonly Application $app,
         private readonly Repository $config,
+        private readonly ComposerJsonEditor $composerJsonEditor,
+        private readonly GitIgnoreEditor $gitIgnoreEditor,
     ) {
         parent::__construct();
     }
@@ -45,6 +49,9 @@ final class CraftableInstall extends Command
     public function handle(): void
     {
         $this->info('Installing Craftable...');
+
+        $this->adjustComposerJson();
+        $this->adjustGitIgnore();
 
         $this->publishAllVendors();
 
@@ -275,5 +282,39 @@ final class CraftableInstall extends Command
         },',
             '|base_path(\'routes/admin.php\')|',
         );
+    }
+
+    private function adjustComposerJson(): void
+    {
+        $composerJsonFile = $this->app->basePath('composer.json');
+        $original = $this->filesystem->get($composerJsonFile);
+        $updated = $this->composerJsonEditor->installCraftable($original);
+
+        if ($original === $updated) {
+            $this->info('composer.json already up to date, skipping');
+
+            return;
+        }
+
+        $this->filesystem->put($composerJsonFile, $updated);
+        $this->info('composer.json updated — run `composer update` to apply the new constraints');
+    }
+
+    private function adjustGitIgnore(): void
+    {
+        $gitIgnoreFile = $this->app->basePath('.gitignore');
+        $original = $this->filesystem->exists($gitIgnoreFile)
+            ? $this->filesystem->get($gitIgnoreFile)
+            : '';
+        $updated = $this->gitIgnoreEditor->installCraftable($original);
+
+        if ($original === $updated) {
+            $this->info('.gitignore already up to date, skipping');
+
+            return;
+        }
+
+        $this->filesystem->put($gitIgnoreFile, $updated);
+        $this->info('.gitignore updated');
     }
 }
