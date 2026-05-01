@@ -6,7 +6,6 @@ namespace Brackets\Craftable\Console\Support;
 
 final readonly class GitIgnoreEditor
 {
-    /** @var list<array{0: string, 1: string|null}> */
     private const array REQUIRED_ENTRIES = [
         ['/.fleet', '/.cursor/'],
         ['/.claude/settings.local.json', '/.zed'],
@@ -18,15 +17,7 @@ final readonly class GitIgnoreEditor
 
     public function installCraftable(string $content): string
     {
-        $hasTrailingNewline = $content === '' || str_ends_with($content, "\n");
-
-        $lines = explode("\n", $content);
-        if ($hasTrailingNewline && $content !== '') {
-            array_pop($lines);
-        }
-        if ($lines === ['']) {
-            $lines = [];
-        }
+        $lines = $this->getLines($content);
 
         foreach (self::REQUIRED_ENTRIES as [$entry, $anchor]) {
             if (in_array($entry, $lines, true)) {
@@ -50,5 +41,23 @@ final readonly class GitIgnoreEditor
         }
 
         return implode("\n", $lines) . "\n";
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getLines(string $content): array
+    {
+        $hasTrailingNewline = $content === '' || str_ends_with($content, "\n");
+
+        $lines = explode("\n", $content);
+        if ($hasTrailingNewline && $content !== '') {
+            array_pop($lines);
+        }
+        if ($lines === ['']) {
+            $lines = [];
+        }
+
+        return $lines;
     }
 }

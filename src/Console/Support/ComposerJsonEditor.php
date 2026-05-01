@@ -18,9 +18,14 @@ final readonly class ComposerJsonEditor
         'phpunit/phpunit' => '^13.0',
     ];
 
+    private static function isPlatformPackage(string $name): bool
+    {
+        return $name === 'php' || str_starts_with($name, 'ext-') || str_starts_with($name, 'lib-');
+    }
+
     public function installCraftable(string $composerJson): string
     {
-        /** @var array<string, mixed> $content */
+        /** @var array<string, string|bool|array<string, string|bool|array>> $content */
         $content = json_decode($composerJson, true, flags: JSON_THROW_ON_ERROR);
 
         $content['require'] = $this->mergeRequire($content['require'] ?? []);
@@ -110,10 +115,5 @@ final readonly class ComposerJsonEditor
         ksort($deps);
 
         return $deps;
-    }
-
-    private static function isPlatformPackage(string $name): bool
-    {
-        return $name === 'php' || str_starts_with($name, 'ext-') || str_starts_with($name, 'lib-');
     }
 }
