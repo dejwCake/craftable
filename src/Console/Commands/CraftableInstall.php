@@ -263,11 +263,18 @@ final class CraftableInstall extends Command
             if (! str_contains($content, '/build')) {
                 $this->filesystem->put($gitignorePath, rtrim($content, "\n") . "\n/build\n");
             }
+            if (! str_contains($content, '/media')) {
+                $this->filesystem->put($gitignorePath, rtrim($content, "\n") . "\n/media\n");
+            }
+
+            if (! str_contains($content, '/uploads')) {
+                $this->filesystem->put($gitignorePath, rtrim($content, "\n") . "\n/uploads\n");
+            }
 
             return;
         }
 
-        $this->filesystem->put($gitignorePath, "/build\n");
+        $this->filesystem->put($gitignorePath, "/build\n/media\n/uploads\n");
     }
 
     private function addAdminRoutes(): void
