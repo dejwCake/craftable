@@ -56,6 +56,8 @@ final class CraftableInstall extends Command
         $this->publishAllVendors();
 
         $this->addAdminRoutes();
+        $this->renderAdminExceptionsAsJson();
+        $this->publishFrameworkAuthTranslations();
         $this->addHashToLogging();
 
         $this->addGitIgnoreToPublic();
@@ -289,6 +291,37 @@ final class CraftableInstall extends Command
         },',
             '|base_path(\'routes/admin.php\')|',
         );
+    }
+
+    /**
+     * Render admin (AJAX) exceptions as JSON so the Craftable login form receives 422
+     * validation errors. The Vue starter kit limits JSON rendering to `api/*`, which
+     * would otherwise turn a failed admin login into a redirect with no visible error.
+     */
+    private function renderAdminExceptionsAsJson(): void
+    {
+        $this->strReplaceInFile(
+            $this->app->basePath('bootstrap/app.php'),
+            '$request->is(\'api/*\')',
+            '$request->is(\'api/*\')
+                || ($request->is(\'admin/*\') && $request->expectsJson())',
+            '|is\(\'admin/\*\'\)|',
+        );
+    }
+
+    /**
+     * Publish the framework auth translations when missing so `auth.failed` renders a
+     * message instead of the raw key on the admin (and Fortify) login forms.
+     */
+    private function publishFrameworkAuthTranslations(): void
+    {
+        $locale = (string) $this->config->get('app.fallback_locale', 'en');
+
+        if ($this->filesystem->exists($this->app->langPath($locale . '/auth.php'))) {
+            return;
+        }
+
+        $this->call('lang:publish');
     }
 
     private function adjustComposerJson(): void
