@@ -19,12 +19,6 @@ parameters:
 			path: database/migrations/fill_default_admin_user_and_permissions.php
 
 		-
-			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
-			identifier: larastan.noEnvCallsOutsideOfConfig
-			count: 8
-			path: tests/Feature/TestCase.php
-
-		-
 			message: '#^Access to an undefined property Brackets\\Craftable\\Tests\\Feature\\TestPublishableWithoutToModel\:\:\$published_to\.$#'
 			identifier: property.notFound
 			count: 2

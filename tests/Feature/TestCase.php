@@ -6,6 +6,7 @@ namespace Brackets\Craftable\Tests\Feature;
 
 use Brackets\Craftable\CraftableServiceProvider;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Env;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
@@ -29,29 +30,29 @@ abstract class TestCase extends Orchestra
      */
     protected function getEnvironmentSetUp($app): void
     {
-        if (env('DB_CONNECTION') === 'pgsql') {
+        if (Env::get('DB_CONNECTION') === 'pgsql') {
             $app['config']->set('database.default', 'pgsql');
             $app['config']->set('database.connections.pgsql', [
                 'driver' => 'pgsql',
                 'host' => 'pgsql',
                 'port' => '5432',
-                'database' => env('DB_DATABASE', 'laravel'),
-                'username' => env('DB_USERNAME', 'root'),
-                'password' => env('DB_PASSWORD', 'bestsecret'),
+                'database' => Env::get('DB_DATABASE', 'laravel'),
+                'username' => Env::get('DB_USERNAME', 'root'),
+                'password' => Env::get('DB_PASSWORD', 'bestsecret'),
                 'charset' => 'utf8',
                 'prefix' => '',
                 'schema' => 'public',
                 'sslmode' => 'prefer',
             ]);
-        } elseif (env('DB_CONNECTION') === 'mysql') {
+        } elseif (Env::get('DB_CONNECTION') === 'mysql') {
             $app['config']->set('database.default', 'mysql');
             $app['config']->set('database.connections.mysql', [
                 'driver' => 'mysql',
                 'host' => 'mysql',
                 'port' => '3306',
-                'database' => env('DB_DATABASE', 'laravel'),
-                'username' => env('DB_USERNAME', 'root'),
-                'password' => env('DB_PASSWORD', 'bestsecret'),
+                'database' => Env::get('DB_DATABASE', 'laravel'),
+                'username' => Env::get('DB_USERNAME', 'root'),
+                'password' => Env::get('DB_PASSWORD', 'bestsecret'),
                 'charset' => 'utf8',
                 'prefix' => '',
             ]);
