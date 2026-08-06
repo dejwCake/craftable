@@ -8,6 +8,7 @@ use Brackets\Craftable\Database\Migrations\Dtos\Permission;
 use Brackets\Craftable\Database\Migrations\Dtos\Role;
 use Carbon\CarbonImmutable;
 use Exception;
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Config\Repository as Config;
 use Illuminate\Database\DatabaseManager;
@@ -32,9 +33,9 @@ abstract class PermissionMigration extends Migration
 
     public function __construct()
     {
-        $this->config = app(Config::class);
-        $this->cache = app(Cache::class);
-        $this->databaseManager = app(DatabaseManager::class);
+        $this->config = Container::getInstance()->make(Config::class);
+        $this->cache = Container::getInstance()->make(Cache::class);
+        $this->databaseManager = Container::getInstance()->make(DatabaseManager::class);
         $this->guardName = $this->config->get('admin-auth.defaults.guard');
         $this->tableNames = $this->getTableNames();
         $this->permissions = new Collection();

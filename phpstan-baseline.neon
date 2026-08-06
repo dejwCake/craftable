@@ -1,19 +1,19 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Parameter \#1 \$permissions of method Illuminate\\Database\\Migrations\\Migration@anonymous/database/migrations/fill_default_admin_user_and_permissions\.php\:15\:\:upUserPermissions\(\) expects array\<array\<string, Carbon\\CarbonInterface\|string\>\>, array\<string, string\>\|bool\|Carbon\\CarbonInterface\|\(Illuminate\\Support\\Collection&iterable\<string\>\)\|string\|null given\.$#'
+			message: '#^Parameter \#1 \$permissions of method Illuminate\\Database\\Migrations\\Migration@anonymous/database/migrations/fill_default_admin_user_and_permissions\.php\:16\:\:upUserPermissions\(\) expects array\<array\<string, Carbon\\CarbonInterface\|string\>\>, array\<string, string\>\|bool\|Carbon\\CarbonInterface\|\(Illuminate\\Support\\Collection&iterable\<string\>\)\|string\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: database/migrations/fill_default_admin_user_and_permissions.php
 
 		-
-			message: '#^Parameter \#1 \$roles of method Illuminate\\Database\\Migrations\\Migration@anonymous/database/migrations/fill_default_admin_user_and_permissions\.php\:15\:\:upUserRoles\(\) expects array\<array\<string, Carbon\\CarbonInterface\|\(Illuminate\\Support\\Collection&iterable\<string\>\)\|string\>\>, array\<string, string\>\|bool\|Carbon\\CarbonInterface\|\(Illuminate\\Support\\Collection&iterable\<string\>\)\|string\|null given\.$#'
+			message: '#^Parameter \#1 \$roles of method Illuminate\\Database\\Migrations\\Migration@anonymous/database/migrations/fill_default_admin_user_and_permissions\.php\:16\:\:upUserRoles\(\) expects array\<array\<string, Carbon\\CarbonInterface\|\(Illuminate\\Support\\Collection&iterable\<string\>\)\|string\>\>, array\<string, string\>\|bool\|Carbon\\CarbonInterface\|\(Illuminate\\Support\\Collection&iterable\<string\>\)\|string\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: database/migrations/fill_default_admin_user_and_permissions.php
 
 		-
-			message: '#^Property Illuminate\\Database\\Migrations\\Migration@anonymous/database/migrations/fill_default_admin_user_and_permissions\.php\:15\:\:\$users \(array\<array\<string, array\<string, string\>\|bool\|Carbon\\CarbonInterface\|\(Illuminate\\Support\\Collection&iterable\<string\>\)\|string\|null\>\>\) does not accept array\<int, array\<string, Carbon\\CarbonImmutable\|list\<array\<string, string\>\>\|string\|true\|null\>\>\.$#'
+			message: '#^Property Illuminate\\Database\\Migrations\\Migration@anonymous/database/migrations/fill_default_admin_user_and_permissions\.php\:16\:\:\$users \(array\<array\<string, array\<string, string\>\|bool\|Carbon\\CarbonInterface\|\(Illuminate\\Support\\Collection&iterable\<string\>\)\|string\|null\>\>\) does not accept array\<int, array\<string, Carbon\\CarbonImmutable\|list\<array\<string, string\>\>\|string\|true\|null\>\>\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: database/migrations/fill_default_admin_user_and_permissions.php

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Contracts\Config\Repository as Config;
 use Illuminate\Contracts\Foundation\Application;
@@ -38,11 +39,12 @@ return new class extends Migration
 
     public function __construct()
     {
-        $this->app = app();
-        $this->db = $this->app->make(ConnectionInterface::class);
-        $this->config = $this->app->make(Config::class);
-        $this->cache = $this->app->make(Cache::class);
-        $this->hashManager = $this->app->make(HashManager::class);
+        $container = Container::getInstance();
+        $this->app = $container->make(Application::class);
+        $this->db = $container->make(ConnectionInterface::class);
+        $this->config = $container->make(Config::class);
+        $this->cache = $container->make(Cache::class);
+        $this->hashManager = $container->make(HashManager::class);
         $this->guardName = $this->config->get('admin-auth.defaults.guard');
         $providerName = $this->config->get(sprintf('auth.guards.%s.provider', $this->guardName));
         $provider = $this->config->get(sprintf('auth.providers.%s', $providerName));
