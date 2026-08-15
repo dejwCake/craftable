@@ -44,7 +44,7 @@
         "dejwcake/craftable-media": "^2.0",
         "dejwcake/craftable-translatable": "^2.0",
         "illuminate/support": "^13.0",
-        "maatwebsite/excel": "4.x-dev",
+        "maatwebsite/excel": "^4.0",
         "spatie/laravel-backup": "^10.2",
         "spatie/laravel-permission": "^7.4"
     },
