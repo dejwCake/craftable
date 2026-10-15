@@ -204,9 +204,19 @@ Static analysis (phpstan):
 docker compose run -it --rm php-qa phpstan analyse --configuration=phpstan.neon
 ```
 
+Regenerate the phpstan baseline:
+```shell
+docker compose run -it --rm php-qa phpstan analyse --configuration=phpstan.neon --generate-baseline=phpstan-baseline.neon
+```
+
 Mess detector (phpmd):
 ```shell
 docker compose run -it --rm php-qa phpmd analyze
+```
+
+Regenerate the phpmd baseline:
+```shell
+docker compose run -it --rm php-qa phpmd analyze --generate-baseline
 ```
 
 ### Run tests
