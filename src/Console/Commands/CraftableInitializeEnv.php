@@ -98,7 +98,7 @@ final class CraftableInitializeEnv extends Command
 
     private function updateDbConnection(): void
     {
-        $connection = $this->choice('What database driver do you use?', ['mysql', 'pgsql'], 'mysql');
+        $connection = $this->choice('What database driver do you use?', ['mariadb', 'mysql', 'pgsql'], 'mariadb');
         if ($connection !== '') {
             $this->updateEnv('DB_CONNECTION', $connection);
         }
@@ -117,7 +117,7 @@ final class CraftableInitializeEnv extends Command
         $port = $this->anticipate(
             'What is your database port?',
             ['3306', '5432'],
-            Env::get('DB_CONNECTION') === 'mysql' ? '3306' : '5432',
+            Env::get('DB_CONNECTION') === 'pgsql' ? '5432' : '3306',
         );
         if ($port !== null && $port !== '') {
             $this->updateEnv('DB_PORT', $port);

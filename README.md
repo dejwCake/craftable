@@ -72,7 +72,7 @@ Craftable is built on Laravel, so you should check out its requirements too. It 
 
 First you need to have a Laravel application, so follow the Laravel installation guide: https://laravel.com/docs/13.x/installation
 
-Create an empty database of your choice (PostgreSQL or MySQL).
+Create an empty database of your choice (MariaDB, MySQL or PostgreSQL).
 
 Now require these two main packages:
 ```bash
@@ -223,7 +223,7 @@ docker compose run -it --rm php-qa phpmd analyze --generate-baseline
 
 Run tests against mariadb:
 ```shell
-docker compose run -it --rm -e DB_CONNECTION=mysql test ./vendor/bin/phpunit
+docker compose run -it --rm -e DB_CONNECTION=mariadb test ./vendor/bin/phpunit
 ```
 
 Run tests against postgresql:
@@ -246,6 +246,6 @@ docker compose run -it --rm test composer update \
   && docker compose run -it --rm php-qa phpcs -s --colors --extensions=php \
   && docker compose run -it --rm php-qa phpstan analyse --configuration=phpstan.neon \
   && docker compose run -it --rm php-qa phpmd analyze \
-  && docker compose run -it --rm -e DB_CONNECTION=mysql test ./vendor/bin/phpunit \
+  && docker compose run -it --rm -e DB_CONNECTION=mariadb test ./vendor/bin/phpunit \
   && docker compose run -it --rm -e DB_CONNECTION=pgsql test ./vendor/bin/phpunit
 ```
