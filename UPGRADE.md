@@ -89,6 +89,7 @@ Additional changes:
 - `env()` helper replaced with `Illuminate\Support\Env::get()`
 - Removed legacy Laravel 5.x version check in `isDefaultDatabaseEnv()` — now only checks for the modern defaults (`laravel`/`root`)
 - `preg_replace()` pattern uses `sprintf()` instead of concatenation
+- Database driver choice is now `mariadb`, `mysql` or `pgsql`, defaulting to `mariadb` (was `mysql`); the suggested port follows the chosen driver (5432 for `pgsql`, otherwise 3306)
 
 ### 6. `CraftableTestDBConnection` Made `final`
 
