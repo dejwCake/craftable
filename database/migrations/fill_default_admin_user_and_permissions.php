@@ -154,6 +154,8 @@ return new class extends Migration
             'admin.admin-user.delete',
             'admin.admin-user.bulk-delete',
             'admin.admin-user.impersonal-login',
+            // reset another admin's second factors (endpoint from dejwcake/admin-auth)
+            'admin.admin-user.security-reset',
 
             // ability to upload
             'admin.upload',

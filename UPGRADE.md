@@ -1,3 +1,16 @@
+# Upgrading within v2
+
+## 2.3.0 (unreleased)
+
+### Permission to reset another admin's two-factor
+
+The default permissions migration adds `admin.admin-user.security-reset` and grants it to the
+`Administrator` role, so fresh installs can reset another admin's two-factor authentication and
+passkeys from the admin-users listing (endpoint in `dejwcake/admin-auth`). Existing projects get the
+permission from admin-auth's `add_admin_security_reset_permission` migration — nothing to do here.
+
+---
+
 # Upgrade Guide: v1 to v2
 
 ## Requirements
