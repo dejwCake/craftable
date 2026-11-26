@@ -1,6 +1,6 @@
 # Upgrading within v2
 
-## 2.2.0 (unreleased)
+## Upgrade to 2.2.0
 
 ### Permission to reset another admin's two-factor
 

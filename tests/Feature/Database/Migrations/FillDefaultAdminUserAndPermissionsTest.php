@@ -5,23 +5,27 @@ declare(strict_types=1);
 namespace Brackets\Craftable\Tests\Feature\Database\Migrations;
 
 use Brackets\Craftable\Tests\TestAdminUserModel;
+use Illuminate\Contracts\Config\Repository as Config;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Override;
 
+use function assert;
+
 /**
  * The default admin user, role and permissions of a fresh install.
  */
-class FillDefaultAdminUserAndPermissionsTest extends PermissionMigrationTestCase
+final class FillDefaultAdminUserAndPermissionsTest extends PermissionMigrationTestCase
 {
     #[Override]
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->app['config']->set('auth.guards.admin', ['driver' => 'session', 'provider' => 'admin_users']);
-        $this->app['config']->set('auth.providers.admin_users', [
+        $config = $this->app->make(Config::class);
+        $config->set('auth.guards.admin', ['driver' => 'session', 'provider' => 'admin_users']);
+        $config->set('auth.providers.admin_users', [
             'driver' => 'eloquent',
             'model' => TestAdminUserModel::class,
         ]);
@@ -64,6 +68,16 @@ class FillDefaultAdminUserAndPermissionsTest extends PermissionMigrationTestCase
         self::assertContains('admin.admin-user.index', $permissions);
     }
 
+    public function testDownRemovesTheSecurityResetPermission(): void
+    {
+        $this->migrate('up');
+        $this->migrate('down');
+
+        self::assertFalse(
+            $this->db()->table('permissions')->where('name', 'admin.admin-user.security-reset')->exists(),
+        );
+    }
+
     /**
      * @return array<int, string>
      */
@@ -80,8 +94,11 @@ class FillDefaultAdminUserAndPermissionsTest extends PermissionMigrationTestCase
 
     private function migrate(string $direction): void
     {
-        $migration = require __DIR__ . '/../../../../database/migrations/fill_default_admin_user_and_permissions.php';
-        \assert($migration instanceof Migration);
+        $migration = require sprintf(
+            '%s/../../../../database/migrations/fill_default_admin_user_and_permissions.php',
+            __DIR__,
+        );
+        assert($migration instanceof Migration);
         // Anonymous migration: the Migration base class declares neither up() nor down().
         $migration->{$direction}();
     }
