@@ -78,11 +78,16 @@ A change is done when phpcs, phpstan, phpmd and the test suite are green.
   anonymous migration can't take constructor DI; that's the accepted helper exception.
 - The default password in that migration is replaced during `craftable:install`; don't change the
   placeholder without updating the installer.
-- Requires every other `dejwcake/*` package at `^2.0`; an install-flow change usually needs a
-  matching change in the sub-package's own install command.
+- Requires every other `dejwcake/*` package at its current minor (see "Versioning"); an
+  install-flow change usually needs a matching change in the sub-package's own install command.
 
 ## Versioning
 
 The package is on **2.x** and stays there through the Laravel 13 / PHP 8.5 upgrade — don't add
 v3 upgrade sections or bump the `branch-alias`. User-facing changes go to `UPGRADE.md` when
 consumers have to act.
+
+Require other `dejwcake/*` packages at their **current minor** (`^2.7`, not `^2.0`), so Composer
+cannot pair this release with a dependency that lacks what it uses. When a `dejwcake/*` package
+ships a minor, raise its floor in every package that requires it and release those as patches in
+the same round.

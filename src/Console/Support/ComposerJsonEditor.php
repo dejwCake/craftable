@@ -8,11 +8,11 @@ final readonly class ComposerJsonEditor
 {
     private const array REQUIRED_REQUIRE = [
         'php' => '^8.5',
-        'dejwcake/craftable' => '^2.0',
+        'dejwcake/craftable' => '^2.2',
     ];
 
     private const array REQUIRED_REQUIRE_DEV = [
-        'dejwcake/admin-generator' => '^2.0',
+        'dejwcake/admin-generator' => '^2.9',
         'fruitcake/laravel-debugbar' => '^4.1',
         'nunomaduro/collision' => '^8.9',
         'phpunit/phpunit' => '^13.0',

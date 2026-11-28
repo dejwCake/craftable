@@ -38,12 +38,12 @@ final class ComposerJsonEditorTest extends TestCase
             "name": "test/project",
             "require": {
                 "php": "^8.5",
-                "dejwcake/craftable": "^2.0",
+                "dejwcake/craftable": "^2.2",
                 "laravel/framework": "^13.0",
                 "laravel/tinker": "^3.0"
             },
             "require-dev": {
-                "dejwcake/admin-generator": "^2.0",
+                "dejwcake/admin-generator": "^2.9",
                 "fakerphp/faker": "^1.23",
                 "fruitcake/laravel-debugbar": "^4.1",
                 "larastan/larastan": "^3.9",
@@ -131,8 +131,8 @@ final class ComposerJsonEditorTest extends TestCase
         $decoded = json_decode($result, true);
 
         self::assertSame('^8.5', $decoded['require']['php']);
-        self::assertSame('^2.0', $decoded['require']['dejwcake/craftable']);
-        self::assertSame('^2.0', $decoded['require-dev']['dejwcake/admin-generator']);
+        self::assertSame('^2.2', $decoded['require']['dejwcake/craftable']);
+        self::assertSame('^2.9', $decoded['require-dev']['dejwcake/admin-generator']);
         self::assertSame('^4.1', $decoded['require-dev']['fruitcake/laravel-debugbar']);
         self::assertSame('^8.9', $decoded['require-dev']['nunomaduro/collision']);
         self::assertSame('^13.0', $decoded['require-dev']['phpunit/phpunit']);
